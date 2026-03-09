@@ -1,9 +1,9 @@
 {
-  "version": "v260309.02 3:29pm",
-  "release": 2,
-  "sha": "05e5c0d",
-  "fullSha": "05e5c0daf57c8357c988709c9751de0aa5e93f0b",
+  "version": "v260309.03 6:16pm",
+  "release": 3,
+  "sha": "19e8339",
+  "fullSha": "19e8339e8d263bc2cc93e884565887aba4e8e4b9",
   "actor": "adimarie",
-  "pushedAt": "2026-03-09T20:29:30Z",
-  "commits": [{"sha": "05e5c0d", "message": "chore: initialize Workhub project \u2014 update CLAUDE.md, add Tailwind v4", "author": "Adi"}]
+  "pushedAt": "2026-03-09T23:16:34Z",
+  "commits": [{"sha": "19e8339", "message": "feat: connect Supabase + create practice management schema", "author": "Adi"}]
 }
