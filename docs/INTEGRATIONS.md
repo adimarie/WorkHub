@@ -11,7 +11,17 @@ When building or modifying any feature that calls a paid API, instrument it to l
 
 ## Configured Services
 
-<!-- Services are added below by the setup wizard -->
+### Supabase (Core)
+- **Project:** wdecjlrfulsdklqeetqb (us-west-2)
+- **Dashboard:** https://supabase.com/dashboard/project/wdecjlrfulsdklqeetqb
+- **Storage buckets:** `media` (public), `documents` (private)
+- **Webhook base URL:** `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/`
+- **Pre-constructed webhook URLs:**
+  - Telnyx: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/telnyx-webhook`
+  - SignWell: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/signwell-webhook`
+  - Square: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/square-webhook`
+  - Stripe: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/stripe-webhook`
+  - Resend inbound: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/resend-inbound-webhook`
 
 ### Email (Resend)
 - API key stored as Supabase secret: `RESEND_API_KEY`
