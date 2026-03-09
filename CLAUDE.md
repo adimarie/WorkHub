@@ -1,4 +1,4 @@
-# [Your Project Name] — Project Directives
+# Workhub — Transformational Practice Management
 
 > **On-demand docs — load when the task matches:**
 > - `docs/CREDENTIALS.md` — **load for:** SQL queries, deploying functions, SSH, API calls
@@ -9,8 +9,7 @@
 > - `docs/INTEGRATIONS.md` — **load for:** external APIs, vendor setup, pricing
 > - `docs/CHANGELOG.md` — **load for:** understanding recent changes, migration context
 
-> **IMPORTANT: First-time setup!**
-> Run `/setup-alpacapps-infra` to set up the full infrastructure interactively.
+> **Project:** Solo somatic & ceremonial practice — clients, services/offerings, appointments, intake forms, mentorship containers, payments
 
 ## Mandatory Behaviors
 
@@ -30,5 +29,5 @@
 ## Quick Refs
 
 - **Tech:** Vanilla HTML/JS + Tailwind v4 | Supabase | GitHub Pages
-- **Live:** https://USERNAME.github.io/REPO/
+- **Live:** https://adimarie.github.io/WorkHub/
 - **Architecture:** Browser → GitHub Pages → Supabase (no server-side code)

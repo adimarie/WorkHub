@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@source "../index.html";
+@source "../en/**/*.html";
+@source "../admin/**/*.html";
+@source "../shared/**/*.js";
+
+@theme {
+  /* Brand Colors — sacred, earthy, ceremonial palette */
+  --color-earth: #8B6F47;
+  --color-earth-light: #C4A77D;
+  --color-earth-dark: #5C4A32;
+  --color-sage: #7A8C6E;
+  --color-sage-light: #A8B89C;
+  --color-sage-dark: #4F5C45;
+  --color-cream: #F5F0E8;
+  --color-ivory: #FAF7F2;
+  --color-charcoal: #2C2C2C;
+  --color-muted: #6B6B6B;
+  --color-gold: #C8A84B;
+  --color-gold-light: #E2C878;
+  --color-rose: #C4786A;
+  --color-rose-light: #D9A09A;
+
+  /* Typography */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Spacing / Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.10);
+  --shadow-modal: 0 8px 48px rgba(0,0,0,0.18);
+}
