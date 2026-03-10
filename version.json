@@ -1,9 +1,9 @@
 {
-  "version": "v260310.04 8:59pm",
-  "release": 4,
-  "sha": "00a00f9",
-  "fullSha": "00a00f9f883dbc2cdc5b8bd4f1c9a9410303f24b",
+  "version": "v260310.05 9:06pm",
+  "release": 5,
+  "sha": "878ae30",
+  "fullSha": "878ae3096f94d422abf3aa6df6b2bcab84beb423",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T01:59:13Z",
-  "commits": [{"sha": "00a00f9", "message": "feat: build all public site pages for The Animist Apothecary", "author": "Adi"}]
+  "pushedAt": "2026-03-10T02:06:21Z",
+  "commits": [{"sha": "878ae30", "message": "feat: add Mythopoetic Being page + update all nav/footer links", "author": "Adi"}]
 }
