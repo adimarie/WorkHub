@@ -1,9 +1,9 @@
 {
-  "version": "v260310.05 9:06pm",
-  "release": 5,
-  "sha": "878ae30",
-  "fullSha": "878ae3096f94d422abf3aa6df6b2bcab84beb423",
+  "version": "v260310.06 11:52pm",
+  "release": 6,
+  "sha": "a212c32",
+  "fullSha": "a212c3218fb883a9ce1f9f14647f75bee025d479",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T02:06:21Z",
-  "commits": [{"sha": "878ae30", "message": "feat: add Mythopoetic Being page + update all nav/footer links", "author": "Adi"}]
+  "pushedAt": "2026-03-10T04:52:49Z",
+  "commits": [{"sha": "a212c32", "message": "docs: add BUILD-SUMMARY.md \u2014 complete record of everything built", "author": "Adi"}]
 }
