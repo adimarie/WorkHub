@@ -1,9 +1,9 @@
 {
-  "version": "v260310.09 1:21pm",
-  "release": 9,
-  "sha": "480590c",
-  "fullSha": "480590c173ce02cc4c46fff611fd8e83cc4df9b8",
+  "version": "v260310.10 1:42pm",
+  "release": 10,
+  "sha": "ddf9ea9",
+  "fullSha": "ddf9ea97148ebd81bfcd6b9b9a91db51dd543ce0",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:21:30Z",
-  "commits": [{"sha": "480590c", "message": "feat: one-time Google Calendar import + Import button in admin", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:42:34Z",
+  "commits": [{"sha": "ddf9ea9", "message": "feat: WorkHub CRM \u2014 React SPA with Supabase-backed storage", "author": "Adi"}]
 }
