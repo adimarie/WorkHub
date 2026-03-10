@@ -278,6 +278,7 @@
           <button id="btnMonth" onclick="setView('month')">Month</button>
           <button id="btnList" onclick="setView('list')">List</button>
         </div>
+        <button class="btn btn-ghost" onclick="runImport()" id="importBtn" title="Pull existing Google Calendar events into Supabase">↓ Import from Google Cal</button>
         <button class="btn btn-primary" onclick="openModal()">+ New</button>
       </div>
     </div>
@@ -820,6 +821,34 @@ function showToast(msg, type) {
   t.textContent = msg;
   t.className = `toast show${type ? ' '+type : ''}`;
   setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── Google Calendar import ────────────────────────────────────────────────────
+async function runImport() {
+  const btn = document.getElementById('importBtn');
+  btn.textContent = '⏳ Importing…'; btn.disabled = true;
+
+  try {
+    const session = await window.adminSupabase.auth.getSession();
+    const token = session?.data?.session?.access_token;
+    if (!token) throw new Error('Not authenticated');
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/import-calendar`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Import failed');
+
+    showToast(data.message, 'success');
+    await loadAppointments();
+    render();
+  } catch (e) {
+    showToast('Import failed: ' + e.message, 'error');
+  } finally {
+    btn.textContent = '↓ Import from Google Cal'; btn.disabled = false;
+  }
 }
 
 // Close modal on backdrop click
