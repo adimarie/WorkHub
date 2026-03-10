@@ -1,9 +1,9 @@
 {
-  "version": "v260310.10 1:42pm",
-  "release": 10,
-  "sha": "ddf9ea9",
-  "fullSha": "ddf9ea97148ebd81bfcd6b9b9a91db51dd543ce0",
+  "version": "v260310.11 1:50pm",
+  "release": 11,
+  "sha": "740e597",
+  "fullSha": "740e597ca24f133b47aecda7c7279d0bb0f7f4d4",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:42:34Z",
-  "commits": [{"sha": "ddf9ea9", "message": "feat: WorkHub CRM \u2014 React SPA with Supabase-backed storage", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:50:26Z",
+  "commits": [{"sha": "740e597", "message": "fix: create Adi's admin account + add WorkHub CRM link to dashboard", "author": "Adi"}]
 }
