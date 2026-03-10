@@ -16,7 +16,22 @@
     <ul class="site-nav__links">
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="services.html">Offerings</a></li>
+      <li class="site-nav__dropdown">
+        <span class="site-nav__dropdown-toggle">
+          Offerings
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+        <div class="site-nav__dropdown-menu">
+          <a href="services.html#developmental-arcs">Developmental Arcs</a>
+          <a href="services.html#shamanic-bodywork">Shamanic Bodywork</a>
+          <a href="services.html#personal-immersions">Personal Immersions</a>
+          <a href="services.html#ceremonial-groups">Ceremonial &amp; Ritual Groups</a>
+          <a href="services.html#platicas">Platicas — Guidance &amp; Counsel</a>
+          <a href="services.html#divinations">Ancestral &amp; Elemental Divinations</a>
+          <div class="dropdown-divider"></div>
+          <a href="services.html" class="dropdown-all">All Offerings</a>
+        </div>
+      </li>
       <li><a href="book.html">Book a Session</a></li>
     </ul>
     <button class="site-nav__hamburger" id="hamburger" aria-label="Open menu">
@@ -27,112 +42,122 @@
 <nav class="site-nav__mobile" id="mobileNav" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="services.html">Offerings</a>
-  <a href="book.html">Book a Session</a>
+  <span class="mobile-section-label">Offerings</span>
+  <a href="services.html#developmental-arcs" class="mobile-sub">Developmental Arcs</a>
+  <a href="services.html#shamanic-bodywork" class="mobile-sub">Shamanic Bodywork</a>
+  <a href="services.html#personal-immersions" class="mobile-sub">Personal Immersions</a>
+  <a href="services.html#ceremonial-groups" class="mobile-sub">Ceremonial &amp; Ritual Groups</a>
+  <a href="services.html#platicas" class="mobile-sub">Platicas — Guidance &amp; Counsel</a>
+  <a href="services.html#divinations" class="mobile-sub">Ancestral &amp; Elemental Divinations</a>
+  <a href="book.html" class="mobile-book">Book a Session</a>
 </nav>
 
-<!-- HERO -->
-<section class="hero" aria-label="Hero">
-  <div class="hero__inner">
-    <h1 class="hero__title">The Animist Apothecary</h1>
-    <p class="hero__tagline">Earth medicine. Somatic ceremony. The threshold between who you were and who you are becoming.</p>
-  </div>
-</section>
-
-<!-- EVOLUTION -->
-<section class="evolution">
-  <div class="container">
-    <div class="evolution__inner">
-      <span class="section-label">A Metamorphosis Has Been Underway</span>
-      <h2>Bodywork &amp; Botanicals becomes<br>The Animist Apothecary</h2>
-      <div class="evolution__body">
-        <p>
-          After sixteen years of service as a somatic touch therapist and hands-on spiritual practitioner,
-          this work has entered a new evolution — one shaped by initiation, lineage, and the steady call
-          of the unseen.
-        </p>
-        <p>
-          What began as massage therapy revealed itself to be something larger. Clients would arrive for
-          bodywork carrying wounds that needed spiritual tending, or seeking spiritual guidance while their
-          bodies cried out for touch. The two could not be separated. The flesh and the sacred are not
-          divided. They never were.
-        </p>
-        <p>
-          And so a new form emerged — one that honors the whole of what a human being is: a creature of
-          earth and cosmos, of ancestry and becoming, of body and spirit woven into one living cloth.
-        </p>
-        <p>
-          The Animist Apothecary is the name this work has grown into. The medicine has not changed.
-          Only the threshold has widened.
-        </p>
-      </div>
-      <blockquote class="evolution__pull">
-        What has always been here remains: deep somatic tending, sacred space, relational care,
-        and the devoted art of helping people return to themselves.
-      </blockquote>
+<!-- HERO — SPLIT LAYOUT -->
+<section class="hero-split" aria-label="Introduction">
+  <div class="hero-split__image" role="img" aria-label="Adi Marie, The Animist Apothecary"></div>
+  <div class="hero-split__content">
+    <span class="section-label">A Metamorphosis Has Been Underway</span>
+    <h2>Bodywork &amp; Botanicals becomes The Animist Apothecary</h2>
+    <div class="hero-split__body">
+      <p>
+        After sixteen years of service as a Somatic Touch Therapist and Hands-on Spiritual Practitioner,
+        my work through Bodywork &amp; Botanicals has come into a new evolution of specialized offerings
+        and curation. What was once a singular path of provision is now interwoven as a supplemental
+        addendum into much deeper transformational offerings of spiritual awakening and healing.
+      </p>
+      <p>
+        The many people who came seeking respite on the massage table almost always had deeper wounds
+        that needed attending to — expressing in physical symptoms of disharmony within their system.
+      </p>
+      <p>
+        After over a decade of devoted study, initiation, and maturation as an answer to the deeper
+        calling of my gifts in service to the world, I now have a richer set of specialized skills
+        to provide the much-needed deep work to bring about life-changing contact with the inner
+        domains of Spirit and Self.
+      </p>
+      <p>
+        <strong>Bodywork &amp; Botanicals has become the next evolution of shamanic care:</strong><br>
+        <em>The Animist Apothecary.</em>
+      </p>
     </div>
+    <blockquote class="hero-split__pull">
+      What has always been here remains: deep somatic tending, sacred space, relational care,
+      and the devoted art of helping people return to themselves.
+    </blockquote>
   </div>
 </section>
 
-<!-- OFFERINGS GRID -->
-<section class="offerings-bg">
-  <div class="container offerings-bg__inner">
+<!-- CURRENT OFFERINGS -->
+<section class="offerings-section">
+  <div class="container">
     <span class="section-label">Current Offerings</span>
     <h2>The Work</h2>
     <div class="offerings-grid">
 
       <a href="services.html#developmental-arcs" class="offering-card">
-        <div class="offering-card__title">Developmental Arcs</div>
-        <p class="offering-card__desc">
-          Sustained, progressive containers held over months — for those ready to go all the way in.
-          Shaped to your specific arc of becoming.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/5dee80f1-0b99-415b-b546-c51e62def7df/processed_PXL_20250623_201406977~3.jpg"
+          alt="Developmental Arcs">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Developmental Arcs</div>
+          <p class="offering-card__desc">Sustained, progressive containers held over months — for those ready to go all the way in. Shaped to your specific arc of becoming.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
       <a href="services.html#shamanic-bodywork" class="offering-card">
-        <div class="offering-card__title">Shamanic Bodywork</div>
-        <p class="offering-card__desc">
-          Touch as spiritual technology — moving through the physical body and the luminous field
-          simultaneously, in ceremony and in presence.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/0f42c722-0544-43e3-9d3f-be117ce57d65/ed8fa593e26322d2dbc88f511685e44b.jpg"
+          alt="Shamanic Bodywork">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Shamanic Bodywork</div>
+          <p class="offering-card__desc">Touch as spiritual technology — moving through the physical body and the luminous field simultaneously, in ceremony and in presence.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
       <a href="services.html#personal-immersions" class="offering-card">
-        <div class="offering-card__title">Personal Immersions</div>
-        <p class="offering-card__desc">
-          Private ceremonial experiences crafted entirely for you — including the Luminous Breath,
-          a full-body breathwork portal. A complete transmission.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/edd404fc-c75c-41a1-8530-45c86a5e381f/4541b7633ce62b8ba03d282dfd419c56~2.jpg"
+          alt="Personal Immersions">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Personal Immersions</div>
+          <p class="offering-card__desc">Private ceremonial experiences crafted entirely for you, including the Luminous Breath — a full-body breathwork portal.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
       <a href="services.html#ceremonial-groups" class="offering-card">
-        <div class="offering-card__title">Ceremonial &amp; Ritual Groups</div>
-        <p class="offering-card__desc">
-          Group gatherings and ceremonial containers — for communities entering the sacred together.
-          Seasonal, thematic, and custom.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/d29c8b1e-e7c1-43de-a7ea-877e16b5bd42/868bbe437fb15f8c12caefb7525bfb72~2.jpg"
+          alt="Ceremonial and Ritual Groups">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Ceremonial &amp; Ritual Groups</div>
+          <p class="offering-card__desc">Group gatherings and ceremonial containers — for communities entering the sacred together. Seasonal, thematic, and custom.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
       <a href="services.html#platicas" class="offering-card">
-        <div class="offering-card__title">Platicas — Guidance &amp; Counsel</div>
-        <p class="offering-card__desc">
-          Spiritual counsel held in ceremony — for those at crossroads, integrating ceremony,
-          or navigating a major initiation.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/8aca5ecc-9b4b-4248-9449-be600f2940f0/4215121e69cb6fae00c143a3b6c3a747.jpg"
+          alt="Platicas — Guidance and Counsel">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Platicas — Guidance &amp; Counsel</div>
+          <p class="offering-card__desc">Spiritual counsel held in ceremony — for those at crossroads, integrating ceremony, or navigating a major initiation.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
       <a href="services.html#divinations" class="offering-card">
-        <div class="offering-card__title">Ancestral &amp; Elemental Divinations</div>
-        <p class="offering-card__desc">
-          Dagara stick divinations from the Wedeme and Kontomble lineages — direct communication
-          with ancestors, elementals, and the forces of the unseen world.
-        </p>
-        <span class="offering-card__link">Learn more</span>
+        <img class="offering-card__img"
+          src="https://images.squarespace-cdn.com/content/v1/66ecc25140cd7f51277b30b0/6bcc7a3b-2759-4cee-8f93-089de3556576/8a6de04c7928c1cab1531ecfcc7cd799.jpg"
+          alt="Ancestral and Elemental Divinations">
+        <div class="offering-card__body">
+          <div class="offering-card__title">Ancestral &amp; Elemental Divinations</div>
+          <p class="offering-card__desc">Dagara stick divinations from the Wedeme and Kontomble lineages — direct communication with ancestors and the forces of the unseen world.</p>
+          <span class="offering-card__link">Learn more</span>
+        </div>
       </a>
 
     </div>
@@ -181,6 +206,9 @@
   <div class="container">
     <span class="section-label">How to Begin</span>
     <h2>A Path Forward</h2>
+    <p style="font-style:italic;color:var(--muted);margin-top:12px;font-size:1.05rem;">
+      Together, we outline a way that is realistic, strategic, and shaped to your specific needs.
+    </p>
     <div class="steps">
       <div class="step">
         <div class="step__num">I</div>

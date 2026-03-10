@@ -16,7 +16,22 @@
     <ul class="site-nav__links">
       <li><a href="index.html">Home</a></li>
       <li><a href="about.html">About</a></li>
-      <li><a href="services.html" class="active">Offerings</a></li>
+      <li class="site-nav__dropdown">
+        <span class="site-nav__dropdown-toggle">
+          Offerings
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+        <div class="site-nav__dropdown-menu">
+          <a href="services.html#developmental-arcs">Developmental Arcs</a>
+          <a href="services.html#shamanic-bodywork">Shamanic Bodywork</a>
+          <a href="services.html#personal-immersions">Personal Immersions</a>
+          <a href="services.html#ceremonial-groups">Ceremonial &amp; Ritual Groups</a>
+          <a href="services.html#platicas">Platicas — Guidance &amp; Counsel</a>
+          <a href="services.html#divinations">Ancestral &amp; Elemental Divinations</a>
+          <div class="dropdown-divider"></div>
+          <a href="services.html" class="dropdown-all active">All Offerings</a>
+        </div>
+      </li>
       <li><a href="book.html">Book a Session</a></li>
     </ul>
     <button class="site-nav__hamburger" id="hamburger" aria-label="Open menu">
@@ -27,8 +42,14 @@
 <nav class="site-nav__mobile" id="mobileNav" aria-label="Mobile navigation">
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="services.html">Offerings</a>
-  <a href="book.html">Book a Session</a>
+  <span class="mobile-section-label">Offerings</span>
+  <a href="services.html#developmental-arcs" class="mobile-sub">Developmental Arcs</a>
+  <a href="services.html#shamanic-bodywork" class="mobile-sub">Shamanic Bodywork</a>
+  <a href="services.html#personal-immersions" class="mobile-sub">Personal Immersions</a>
+  <a href="services.html#ceremonial-groups" class="mobile-sub">Ceremonial &amp; Ritual Groups</a>
+  <a href="services.html#platicas" class="mobile-sub">Platicas — Guidance &amp; Counsel</a>
+  <a href="services.html#divinations" class="mobile-sub">Ancestral &amp; Elemental Divinations</a>
+  <a href="book.html" class="mobile-book">Book a Session</a>
 </nav>
 
 <!-- PAGE HEADER -->
