@@ -1,9 +1,9 @@
 {
-  "version": "v260310.03 7:47pm",
-  "release": 3,
-  "sha": "cbf2c20",
-  "fullSha": "cbf2c20de12281462702663c49f4beb1d9d02126",
+  "version": "v260310.04 8:59pm",
+  "release": 4,
+  "sha": "00a00f9",
+  "fullSha": "00a00f9f883dbc2cdc5b8bd4f1c9a9410303f24b",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T00:47:16Z",
-  "commits": [{"sha": "cbf2c20", "message": "feat: add Google Gemini AI \u2014 edge function, secret, client module", "author": "Adi"}]
+  "pushedAt": "2026-03-10T01:59:13Z",
+  "commits": [{"sha": "00a00f9", "message": "feat: build all public site pages for The Animist Apothecary", "author": "Adi"}]
 }
