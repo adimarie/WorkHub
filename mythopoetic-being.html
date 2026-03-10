@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mythopoetic Being — Personal Mythic Development | The Animist Apothecary</title>
+  <meta name="description" content="An initiation into your own sacred story. Personal Mythic Development through myth, archetype, dream, ancestral lineage, and the soul's symbolic language.">
+  <link rel="stylesheet" href="styles/site.css">
+  <style>
+    .myth-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 48px 0;
+    }
+    .myth-card {
+      background: var(--ivory);
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-xl);
+      padding: 32px 28px;
+      transition: all var(--ease);
+      position: relative;
+    }
+    .myth-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity var(--ease); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .myth-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .myth-card:hover::before { opacity: 1; }
+    .myth-card__glyph { font-size: 28px; margin-bottom: 16px; display: block; }
+    .myth-card__title {
+      font-family: var(--font-serif); font-size: 1.2rem; font-weight: 400;
+      color: var(--wine-deep); margin-bottom: 10px;
+    }
+    .myth-card__desc { font-size: 14px; color: var(--muted); line-height: 1.75; }
+
+    .myth-hero-ornament {
+      position: absolute;
+      right: clamp(20px, 8vw, 120px);
+      bottom: 80px;
+      font-size: clamp(80px, 15vw, 160px);
+      opacity: 0.06;
+      color: var(--gold);
+      font-family: var(--font-serif);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .threshold-quote {
+      background: linear-gradient(135deg, #2C0D15 0%, #3D1A08 100%);
+      border-radius: var(--radius-xl);
+      padding: clamp(40px, 6vw, 72px);
+      text-align: center;
+      margin: 56px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .threshold-quote::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(200,168,75,0.08) 0%, transparent 65%);
+    }
+    .threshold-quote__inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+    .threshold-quote__text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+      font-weight: 300; font-style: italic;
+      color: var(--cream); line-height: 1.6; margin-bottom: 20px;
+    }
+    .threshold-quote__text em { color: var(--gold-light); }
+    .threshold-quote__attr {
+      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(200,168,75,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" id="siteNav">
+  <div class="site-nav__inner">
+    <a href="index.html" class="site-nav__brand">
+      <span class="site-nav__brand-name">The Animist Apothecary</span>
+      <span class="site-nav__brand-sub">Bodywork + Botanicals</span>
+    </a>
+    <ul class="site-nav__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li class="site-nav__dropdown">
+        <span class="site-nav__dropdown-toggle">Offerings <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+        <div class="site-nav__dropdown-menu">
+          <a href="mentorship.html">Mentorship Containers</a>
+          <a href="mythopoetic-being.html">Mythopoetic Being</a>
+          <a href="somatic-bodywork.html">Somatic Bodywork</a>
+          <a href="ceremonial-bodywork.html">Ceremonial Bodywork</a>
+          <a href="massage-therapy.html">Massage Therapy</a>
+          <a href="sacred-breath.html">The Luminous Breath</a>
+          <a href="divinations.html">Dagara Divinations</a>
+          <a href="guidance-counseling.html">Plàticas — Guidance</a>
+          <a href="single-sessions.html">Single Sessions</a>
+          <a href="gatherings.html">Group Gatherings</a>
+        </div>
+      </li>
+      <li><a href="writings.html">Writings</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="site-nav__cta">Begin Here</a>
+    <button class="site-nav__hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<nav class="site-nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="about.html">About Adi Marie</a>
+  <a href="mentorship.html">Mentorship Containers</a>
+  <a href="mythopoetic-being.html">Mythopoetic Being</a>
+  <a href="somatic-bodywork.html">Somatic Bodywork</a>
+  <a href="ceremonial-bodywork.html">Ceremonial Bodywork</a>
+  <a href="massage-therapy.html">Massage Therapy</a>
+  <a href="sacred-breath.html">The Luminous Breath</a>
+  <a href="divinations.html">Dagara Divinations</a>
+  <a href="guidance-counseling.html">Plàticas — Guidance & Counsel</a>
+  <a href="single-sessions.html">Single Sessions & Private Ceremonies</a>
+  <a href="gatherings.html">Group Gatherings</a>
+  <a href="writings.html">Writings</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="mobile-cta">Begin Here</a>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero" style="min-height:60vh;">
+  <div class="myth-hero-ornament">☽</div>
+  <div class="container page-hero__inner">
+    <span class="page-hero__eyebrow">Personal Mythic Development</span>
+    <h1 class="page-hero__title">Mythopoetic Being</h1>
+    <p class="page-hero__desc">
+      An initiation into your own sacred story — where the soul's symbolic language
+      becomes the map by which you navigate a life of meaning.
+    </p>
+  </div>
+</section>
+
+<!-- OPENING -->
+<section class="content-section">
+  <div class="container container--narrow">
+
+    <div class="content-block">
+      <span class="section-label">The Work of Mythic Identity</span>
+      <h2>You are already living a myth.</h2>
+      <p>
+        The question is whether you know which one — and whether it is yours.
+      </p>
+      <p>
+        Long before psychology gave us archetypes and long before literature gave us narrative,
+        human beings understood themselves through story. Not the small story of what happened
+        to you last Tuesday, but the great story — the one that runs beneath the surface of
+        your days like an underground river, shaping what you are drawn to, what you fear,
+        who appears at your door, and what keeps returning no matter how many times you
+        try to leave it behind.
+      </p>
+      <p>
+        Mythopoetic Being is the practice of coming into conscious, living relationship
+        with that story — not to explain it away, but to enter it more fully. To meet the
+        characters. To understand the terrain. To recognize the thresholds for what they are,
+        and to cross them with intention.
+      </p>
+    </div>
+
+    <blockquote class="pull-quote">
+      Every wound has a myth that contains it. Every gift has a myth that explains it.
+      Every life — however ordinary it appears from the outside — is a story
+      the cosmos is telling <em>through</em> a body.
+    </blockquote>
+
+    <div class="content-block">
+      <h2>What Is the Mythic Self?</h2>
+      <p>
+        The mythic self is not a persona you construct. It is the self that existed
+        before the world told you who to be — the self that speaks in dreams, in longing,
+        in the images that arrive unbidden and refuse to leave. It is the part of you
+        that is in direct conversation with something larger than biography.
+      </p>
+      <p>
+        In indigenous and ancestral traditions across the world, this dimension of the self
+        was not considered mystical in an esoteric sense — it was simply understood as real.
+        You were known by your clan, your element, your animal allies, your ancestral role.
+        You were held inside a story that was bigger than your individual life, and that
+        story gave your suffering meaning and your gifts a direction.
+      </p>
+      <p>
+        Mythopoetic Being is the work of recovering this orientation — not by borrowing
+        from traditions that are not yours, but by returning to the symbolic and ancestral
+        intelligence already alive within you, waiting to be recognized.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- THRESHOLD QUOTE -->
+<div class="container container--narrow">
+  <div class="threshold-quote">
+    <div class="threshold-quote__inner">
+      <p class="threshold-quote__text">
+        The soul does not speak in the language of explanation.
+        It speaks in image, in symbol, in the recurring dream,
+        in the thing you cannot stop returning to —
+        the <em>ache that has no name</em> until you give it one.
+      </p>
+      <span class="threshold-quote__attr">— The Animist Apothecary</span>
+    </div>
+  </div>
+</div>
+
+<!-- THE ELEMENTS -->
+<section class="content-section" style="padding-top:0;">
+  <div class="container">
+    <span class="section-label">The Territories We Enter</span>
+    <h2>The Soul's Symbolic Language</h2>
+    <p class="mt-sm" style="color:var(--brown);max-width:600px;font-size:1.05rem;">
+      Mythopoetic work moves through several interweaving territories,
+      each a different dialect of the same deeper tongue.
+    </p>
+
+    <div class="myth-grid">
+      <div class="myth-card">
+        <span class="myth-card__glyph">📖</span>
+        <h3 class="myth-card__title">Personal Narrative as Sacred Story</h3>
+        <p class="myth-card__desc">
+          Learning to read your own biography as myth — not as a sequence of events
+          that happened to you, but as a sacred narrative your soul is authoring.
+          Where have you been the hero? The exile? The one who waits at the threshold?
+        </p>
+      </div>
+
+      <div class="myth-card">
+        <span class="myth-card__glyph">🌙</span>
+        <h3 class="myth-card__title">Dream & Vision Work</h3>
+        <p class="myth-card__desc">
+          Dreams are the soul's original language — unmediated, symbolic, alive.
+          We learn to meet them with respect rather than analysis, to ask what they want
+          rather than what they mean. The dreaming body knows things the waking mind
+          has not yet been told.
+        </p>
+      </div>
+
+      <div class="myth-card">
+        <span class="myth-card__glyph">♾</span>
+        <h3 class="myth-card__title">Archetype & Mythic Pattern</h3>
+        <p class="myth-card__desc">
+          The great stories — across cultures and centuries — describe patterns that
+          live inside us. Recognizing the myth you are living gives you back your agency
+          within it. You are no longer only the character. You become also the author.
+        </p>
+      </div>
+
+      <div class="myth-card">
+        <span class="myth-card__glyph">🌿</span>
+        <h3 class="myth-card__title">Ancestral Lineage & Inherited Story</h3>
+        <p class="myth-card__desc">
+          The stories our ancestors lived — and the ones they could not complete —
+          continue to move through us. Mythopoetic work includes the work of
+          recognizing inherited patterns, honoring what was carried, and choosing
+          consciously what we pass forward.
+        </p>
+      </div>
+
+      <div class="myth-card">
+        <span class="myth-card__glyph">🔥</span>
+        <h3 class="myth-card__title">Initiation & Threshold Crossing</h3>
+        <p class="myth-card__desc">
+          Every genuine transformation follows an initiatory arc: severance, ordeal,
+          return. Understanding where you stand within this arc — and being accompanied
+          through it — changes the quality of what is possible on the other side.
+        </p>
+      </div>
+
+      <div class="myth-card">
+        <span class="myth-card__glyph">✦</span>
+        <h3 class="myth-card__title">Soul Gifts & Mythic Calling</h3>
+        <p class="myth-card__desc">
+          What are you here to bring? Not as ambition, but as necessity — the thing
+          that your particular configuration of gifts, wounds, and lineage uniquely
+          equips you to offer. Mythopoetic work helps make this visible and livable.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="content-section" style="background:var(--ivory);padding:clamp(60px,8vw,100px) 0;">
+  <div class="container container--narrow">
+    <span class="section-label">How This Work Unfolds</span>
+    <h2>Not a method. A conversation.</h2>
+    <div class="content-block">
+      <p>
+        Mythopoetic Being is not a fixed curriculum or a self-improvement program.
+        It is a living inquiry, held in relationship over time. Each person arrives
+        with a different story, a different set of images, a different constellation
+        of wounds and gifts — and so each container is shaped to meet exactly that.
+      </p>
+      <p>
+        We work through conversation, somatic awareness, dreamwork, ancestral inquiry,
+        divination, creative expression, and — when the work calls for it — ceremony.
+        The pace is not hurried. The goal is not resolution. It is <em>depth</em>.
+      </p>
+    </div>
+
+    <div class="process-steps mt-md">
+      <div class="process-step">
+        <div class="process-step__num">I</div>
+        <div>
+          <h4 class="process-step__title">The Mythic Mapping</h4>
+          <p class="process-step__body">
+            We begin by mapping the territory — the recurring themes, the figures
+            that populate your inner life, the stories you tell yourself about who
+            you are and where you've been. This is not psychoanalysis. It is cartography.
+            We are drawing the landscape so we know how to move through it.
+          </p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step__num">II</div>
+        <div>
+          <h4 class="process-step__title">Entering the Story</h4>
+          <p class="process-step__body">
+            With the map in hand, we begin to enter the story more consciously —
+            through dreamwork, ancestral inquiry, somatic tracking, and creative
+            dialogue. The images are not analyzed from a distance. They are approached
+            as one approaches an elder: with curiosity, respect, and a genuine
+            willingness to be changed by the encounter.
+          </p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step__num">III</div>
+        <div>
+          <h4 class="process-step__title">Threshold & Transformation</h4>
+          <p class="process-step__body">
+            The mythic journey always leads to a threshold. We do not rush toward it —
+            but we do not avoid it either. I accompany you through the places of
+            severance, dissolution, and reorientation. The work here is held
+            in the body as much as the mind, attended to with care for the whole
+            of what you are.
+          </p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="process-step__num">IV</div>
+        <div>
+          <h4 class="process-step__title">The Return & Integration</h4>
+          <p class="process-step__body">
+            Every initiatory journey has a return — a way of bringing back what
+            was found and weaving it into a lived life. We close each arc with
+            integration: ritual, ceremony, creative expression, and the practical
+            work of living differently in the world.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO THIS IS FOR -->
+<section class="content-section">
+  <div class="container container--narrow">
+    <span class="section-label">Who Comes to This Work</span>
+    <h2>Those who are living a story<br>bigger than they can explain.</h2>
+    <div class="content-block mt-md">
+      <p>
+        Mythopoetic work calls people at particular moments — not always the moments
+        they would have chosen, but the moments that are ripe. You may find yourself here if:
+      </p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:32px 0;">
+      <div class="serve-item"><span class="serve-item__dot"></span>You are in the middle of a major life transition and cannot find the thread</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>The same patterns keep appearing no matter how much you understand them</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>You have a persistent sense of calling you cannot yet name</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>Your dreams are vivid, urgent, and feel like they are trying to tell you something</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>You are grieving a loss that goes deeper than what language can hold</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>You want to understand the ancestral stories moving through your blood</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>You are a creative, artist, or maker whose work is asking something of you</div>
+      <div class="serve-item"><span class="serve-item__dot"></span>You are in or emerging from an initiatory experience — ceremony, illness, loss, birth</div>
+    </div>
+
+    <div class="scaffold-note">
+      [YOUR WORDS — anything else you want to say about who this work calls, or who it may not be right for. What does readiness look like? What are you listening for in a first conversation?]
+    </div>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section class="content-section" style="background:var(--ivory);padding:clamp(60px,8vw,100px) 0;">
+  <div class="container container--narrow">
+    <span class="section-label">How We Work Together</span>
+    <h2>Containers & Formats</h2>
+
+    <div class="myth-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:36px;">
+      <div class="myth-card">
+        <span class="myth-card__glyph">🌀</span>
+        <h3 class="myth-card__title">Developmental Arc</h3>
+        <p class="myth-card__desc">
+          An ongoing container — typically 3, 6, or 12 months — for those ready
+          to go deep into the mythic dimensions of their life over time.
+          Includes regular sessions, dreamwork, and ceremony as the arc calls for it.
+        </p>
+        <div class="scaffold-note" style="margin-top:16px;">[Duration options, investment, what's included]</div>
+      </div>
+      <div class="myth-card">
+        <span class="myth-card__glyph">✦</span>
+        <h3 class="myth-card__title">Personal Immersion</h3>
+        <p class="myth-card__desc">
+          A single, extended session of 3–4 hours — a deep dive into one
+          particular threshold, dream, or mythic question. Complete in itself,
+          though often the beginning of a longer relationship.
+        </p>
+        <div class="scaffold-note" style="margin-top:16px;">[Duration, investment, availability]</div>
+      </div>
+      <div class="myth-card">
+        <span class="myth-card__glyph">🌙</span>
+        <h3 class="myth-card__title">Group Mythic Inquiry</h3>
+        <p class="myth-card__desc">
+          Small gatherings for collective mythic exploration — seasonal, thematic,
+          or structured around a particular tradition or story. When the work
+          is held by community, it goes places the individual journey cannot.
+        </p>
+        <div class="scaffold-note" style="margin-top:16px;">[Upcoming group offerings or how to inquire]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING QUOTE + CTA -->
+<section class="promise" style="padding:clamp(60px,8vw,100px) 0;">
+  <div class="container">
+    <div class="promise__inner">
+      <div class="promise__glyph">☽ ✦ ☾</div>
+      <p class="promise__text">
+        The myth is not something you make up.
+        It is something you <em>remember</em> —
+        layer by layer, return by return,
+        in the company of someone
+        who has learned to listen.
+      </p>
+      <p class="promise__attr">— The Animist Apothecary</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" style="padding:clamp(40px,6vw,72px) 0;">
+  <div class="container container--narrow">
+    <div class="cta-block">
+      <span class="section-label">Begin Here</span>
+      <h3>Enter Your Story</h3>
+      <p>
+        Start with a 15-minute introductory call. We will listen to where you are,
+        and together discern whether this work is what the moment is asking for.
+      </p>
+      <a href="contact.html" class="btn-primary">Schedule an Intro Call</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="container">
+    <div class="newsletter__inner">
+      <h2 class="newsletter__title">Water, Milk, and Honey</h2>
+      <p class="newsletter__sub">Gleanings from my Harvests — updates, poetry, sacred songs, and tender reflections</p>
+      <form class="newsletter__form" id="newsletterForm">
+        <input type="email" class="newsletter__input" placeholder="Your email address" required>
+        <button type="submit" class="newsletter__btn">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="footer-brand">
+      <div class="footer-brand__name">The Animist Apothecary</div>
+      <div class="footer-brand__sub">Bodywork + Botanicals</div>
+      <p class="footer-brand__bio">A sanctuary of ancestral wisdom, somatic touch, and sacred ceremony in Topanga Canyon, Los Angeles. Rooted in lineage. Devoted to the living body and the web of life.</p>
+      <a href="https://instagram.com/ahtheemaree" class="footer-brand__instagram" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        @ahtheemaree
+      </a>
+    </div>
+    <div>
+      <div class="footer-col__title">Offerings</div>
+      <ul class="footer-col__links">
+        <li><a href="mentorship.html">Mentorship Containers</a></li>
+        <li><a href="mythopoetic-being.html">Mythopoetic Being</a></li>
+        <li><a href="somatic-bodywork.html">Somatic Bodywork</a></li>
+        <li><a href="ceremonial-bodywork.html">Ceremonial Bodywork</a></li>
+        <li><a href="massage-therapy.html">Massage Therapy</a></li>
+        <li><a href="sacred-breath.html">The Luminous Breath</a></li>
+        <li><a href="divinations.html">Dagara Divinations</a></li>
+        <li><a href="guidance-counseling.html">Plàticas</a></li>
+        <li><a href="gatherings.html">Group Gatherings</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col__title">Navigate</div>
+      <ul class="footer-col__links">
+        <li><a href="about.html">About Adi Marie</a></li>
+        <li><a href="writings.html">Writings</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Book an Intro Call</a></li>
+        <li><a href="https://instagram.com/ahtheemaree" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+      <div class="footer-col__title mt-md">Location</div>
+      <p style="font-size:13px;color:rgba(245,240,232,0.4);line-height:1.6;">Topanga Canyon<br>Los Angeles, California<br>Wed – Sun · 10am – 6pm</p>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <span>© 2026 The Animist Apothecary · Adi Marie</span>
+    <span style="color:rgba(245,240,232,0.25);">Topanga Canyon, CA</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="shared/supabase.js"></script>
+<script src="shared/auth.js"></script>
+<script>
+  var nav = document.getElementById('siteNav');
+  window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 20); });
+  document.getElementById('hamburger').addEventListener('click', function() { document.getElementById('mobileNav').classList.toggle('open'); });
+  document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = this.querySelector('button');
+    btn.textContent = 'Thank you ✦'; btn.disabled = true;
+    this.querySelector('input').value = '';
+  });
+</script>
+</body>
+</html>
