@@ -1,9 +1,9 @@
 {
-  "version": "v260310.14 2:12pm",
-  "release": 14,
-  "sha": "71b87a6",
-  "fullSha": "71b87a6c71333213d4a65fc66a5071363b514fba",
+  "version": "v260310.15 2:22pm",
+  "release": 15,
+  "sha": "ce94c75",
+  "fullSha": "ce94c750fde54f156950167bf148aceae47d496d",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T19:12:56Z",
-  "commits": [{"sha": "71b87a6", "message": "feat: build four public-facing pages with new design system", "author": "Adi"}]
+  "pushedAt": "2026-03-10T19:22:47Z",
+  "commits": [{"sha": "ce94c75", "message": "feat: split hero layout, offerings dropdown nav, image cards", "author": "Adi"}]
 }
