@@ -1,9 +1,9 @@
 {
-  "version": "v260310.07 1:14pm",
-  "release": 7,
-  "sha": "25a8e57",
-  "fullSha": "25a8e571b29e97d9bb0fdbc602c3ef91cd940a11",
+  "version": "v260310.08 1:17pm",
+  "release": 8,
+  "sha": "17578ec",
+  "fullSha": "17578ecef74558dd6c3c24fab251ca0764189d00",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:14:13Z",
-  "commits": [{"sha": "25a8e57", "message": "feat: Google Calendar CRM integration + visual appointments admin", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:17:17Z",
+  "commits": [{"sha": "17578ec", "message": "docs: log Google Calendar push channel + renewal instructions", "author": "Adi"}]
 }
