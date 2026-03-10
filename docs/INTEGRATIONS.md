@@ -64,4 +64,23 @@ When building or modifying any feature that calls a paid API, instrument it to l
 ### Object Storage (Cloudflare R2)
 - Free tier: 10 GB storage, 10M reads/mo, 1M writes/mo, zero egress
 
+### Google Calendar CRM ✅
+- **Calendar ID:** `adimarie@bodyworkandbotanicals.com`
+- **OAuth Client:** `781824716968-fdag0d6qdg620ovn65oc6lm5449ruof2.apps.googleusercontent.com` (Workhub)
+- **Secrets (Supabase):** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALENDAR_REFRESH_TOKEN`, `GOOGLE_CALENDAR_ID`
+- **Edge functions:**
+  - `sync-calendar` (JWT required) — create/update/delete Google Calendar events from appointments
+  - `calendar-webhook` (no-verify-jwt) — receive Google push notifications, sync changes back to Supabase
+- **Client module:** `shared/calendar-service.js` — `calendarService.sync(apptId)`, `.remove(apptId)`
+- **Push channel:** ID `workhub-cal-channel-1`, resource `1G_3vEW5CTsD07sA_78IBbYOA_c`
+- **⚠️ Channel expires: ~March 17, 2026** — re-run watch registration before then:
+  ```bash
+  # Get access token first, then:
+  curl -X POST "https://www.googleapis.com/calendar/v3/calendars/adimarie%40bodyworkandbotanicals.com/events/watch" \
+    -H "Authorization: Bearer ACCESS_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"id":"workhub-cal-channel-2","type":"web_hook","address":"https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/calendar-webhook"}'
+  ```
+  (Increment channel ID each renewal — Google rejects reuse of an active channel ID)
+
 <!-- Only the services you selected during setup will be active -->
