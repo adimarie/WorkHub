@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointments — Admin</title>
+  <link rel="stylesheet" href="../shared/admin.css">
+  <style>
+    :root {
+      --wine:   #6b2d3e;
+      --gold:   #c9a84c;
+      --cream:  #f5f0e8;
+      --sage:   #5a6b5d;
+      --dark:   #1a1a1a;
+      --surface:#ffffff;
+      --border: #e5e0d8;
+      --text:   #2d2520;
+      --muted:  #8a8078;
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--cream); color:var(--text); }
+    .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .sidebar {
+      background:var(--wine); color:#fff; padding:24px 0;
+      position:sticky; top:0; height:100vh; overflow-y:auto;
+    }
+    .sidebar__brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.15); }
+    .sidebar__brand-name { font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; }
+    .sidebar__brand-sub  { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .sidebar__nav { padding:16px 0; }
+    .sidebar__nav a {
+      display:block; padding:10px 20px; color:rgba(255,255,255,.75); text-decoration:none;
+      font-size:13px; font-weight:500; transition:all .15s;
+    }
+    .sidebar__nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar__nav a.active { background:rgba(255,255,255,.15); color:#fff; border-left:3px solid var(--gold); padding-left:17px; }
+    .sidebar__user { padding:16px 20px; border-top:1px solid rgba(255,255,255,.15); margin-top:auto; }
+    .sidebar__user-name { font-size:12px; font-weight:600; color:#fff; }
+    .sidebar__user-email { font-size:11px; color:rgba(255,255,255,.5); }
+    .sidebar__signout { display:block; margin-top:10px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; text-decoration:underline; }
+
+    /* ── Main ─────────────────────────────────────────── */
+    .main { padding:32px; overflow-y:auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .page-header h1 { font-size:24px; font-weight:700; margin:0; }
+    .page-header__actions { display:flex; gap:10px; align-items:center; }
+
+    /* ── View toggle ─────────────────────────────────────── */
+    .view-toggle { display:flex; background:#fff; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .view-toggle button {
+      padding:7px 14px; border:none; background:none; cursor:pointer;
+      font-size:13px; font-weight:500; color:var(--muted); transition:.15s;
+    }
+    .view-toggle button.active { background:var(--wine); color:#fff; }
+
+    /* ── Buttons ──────────────────────────────────────────── */
+    .btn { padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.15s; }
+    .btn-primary { background:var(--wine); color:#fff; }
+    .btn-primary:hover { opacity:.9; }
+    .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-ghost:hover { background:var(--cream); }
+    .btn-danger { background:#dc2626; color:#fff; }
+    .btn-sm { padding:5px 12px; font-size:12px; }
+
+    /* ── Calendar nav ─────────────────────────────────────── */
+    .cal-nav {
+      display:flex; align-items:center; gap:12px; margin-bottom:20px;
+      background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 16px;
+    }
+    .cal-nav__title { font-size:16px; font-weight:700; flex:1; }
+    .cal-nav button { border:none; background:none; cursor:pointer; padding:4px 8px; border-radius:4px; font-size:14px; }
+    .cal-nav button:hover { background:var(--cream); }
+    .cal-nav__today { font-size:12px; font-weight:600; padding:5px 12px; border:1px solid var(--border); border-radius:6px; cursor:pointer; }
+    .cal-nav__today:hover { background:var(--cream); }
+
+    /* ── Week view ────────────────────────────────────────── */
+    .week-grid {
+      background:#fff; border:1px solid var(--border); border-radius:12px;
+      overflow:hidden; display:grid;
+      grid-template-columns: 52px repeat(7, 1fr);
+    }
+    .week-grid__header { display:contents; }
+    .week-grid__header-cell {
+      padding:10px 6px; text-align:center; font-size:12px; font-weight:600;
+      border-bottom:1px solid var(--border); position:sticky; top:0; background:#fff; z-index:2;
+    }
+    .week-grid__header-cell:first-child { border-right:1px solid var(--border); }
+    .week-grid__header-cell .day-name { color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-size:10px; }
+    .week-grid__header-cell .day-num { font-size:18px; font-weight:700; margin-top:2px; line-height:1; }
+    .week-grid__header-cell.today .day-num {
+      background:var(--wine); color:#fff; border-radius:50%;
+      width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center;
+    }
+    .week-grid__body { display:contents; }
+    .week-grid__time-col { display:flex; flex-direction:column; border-right:1px solid var(--border); }
+    .week-grid__time-slot { height:48px; border-bottom:1px solid #f0ece4; display:flex; align-items:flex-start; justify-content:flex-end; padding:3px 6px 0 0; }
+    .week-grid__time-slot span { font-size:10px; color:var(--muted); white-space:nowrap; }
+    .week-grid__day-col { position:relative; border-right:1px solid var(--border); min-height:1152px; }
+    .week-grid__day-col:last-child { border-right:none; }
+    .week-grid__hour-line { position:absolute; left:0; right:0; border-top:1px solid #f0ece4; }
+    .week-grid__half-line { position:absolute; left:0; right:0; border-top:1px dashed #f0ece4; }
+
+    /* ── Appointment chips ─────────────────────────────────── */
+    .appt-chip {
+      position:absolute; left:3px; right:3px;
+      border-radius:6px; padding:4px 7px; cursor:pointer;
+      font-size:11px; overflow:hidden; transition:.15s;
+      border-left:3px solid transparent;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
+    }
+    .appt-chip:hover { filter:brightness(.93); }
+    .appt-chip__title { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .appt-chip__sub { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:.8; margin-top:1px; }
+    .appt-chip__cal { font-size:9px; opacity:.6; margin-top:1px; }
+
+    /* Category colors */
+    .cat-somatic     { background:#f0e8f4; border-color:#8b5cf6; color:#4c1d95; }
+    .cat-ceremonial  { background:#fef3c7; border-color:var(--gold); color:#78350f; }
+    .cat-divination  { background:#e0f2fe; border-color:#0284c7; color:#0c4a6e; }
+    .cat-mentorship  { background:#dcfce7; border-color:var(--sage); color:#14532d; }
+    .cat-massage     { background:#ffe4e6; border-color:#e11d48; color:#881337; }
+    .cat-breathwork  { background:#f0fdf4; border-color:#22c55e; color:#14532d; }
+    .cat-guidance    { background:#fff7ed; border-color:#f97316; color:#7c2d12; }
+    .cat-default     { background:#f1f5f9; border-color:#64748b; color:#1e293b; }
+    .cat-cancelled   { background:#f1f5f9; border-color:#94a3b8; color:#64748b; opacity:.6; }
+
+    /* ── Month view ───────────────────────────────────────── */
+    .month-grid {
+      background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden;
+    }
+    .month-grid__header { display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid var(--border); }
+    .month-grid__header-cell { padding:10px; text-align:center; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+    .month-grid__body { display:grid; grid-template-columns:repeat(7,1fr); }
+    .month-grid__day {
+      min-height:120px; border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:8px 6px; position:relative;
+    }
+    .month-grid__day:nth-child(7n) { border-right:none; }
+    .month-grid__day.other-month { background:#fafaf8; }
+    .month-grid__day.today { background:#fdf8f0; }
+    .month-grid__day-num {
+      font-size:12px; font-weight:600; color:var(--muted); margin-bottom:4px;
+      width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%;
+    }
+    .month-grid__day.today .month-grid__day-num { background:var(--wine); color:#fff; }
+    .month-appt {
+      display:block; padding:2px 5px; border-radius:3px; font-size:11px; font-weight:500;
+      margin-bottom:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .month-more { font-size:10px; color:var(--wine); font-weight:600; cursor:pointer; padding:2px 4px; }
+
+    /* ── List view ──────────────────────────────────────────── */
+    .appt-list { display:flex; flex-direction:column; gap:10px; }
+    .appt-row {
+      background:#fff; border:1px solid var(--border); border-radius:10px;
+      padding:14px 16px; display:flex; align-items:center; gap:16px; cursor:pointer; transition:.15s;
+    }
+    .appt-row:hover { border-color:var(--wine); }
+    .appt-row__time { min-width:90px; }
+    .appt-row__date { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+    .appt-row__hour { font-size:15px; font-weight:700; }
+    .appt-row__dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .appt-row__info { flex:1; }
+    .appt-row__title { font-size:14px; font-weight:600; }
+    .appt-row__sub { font-size:12px; color:var(--muted); margin-top:2px; }
+    .appt-row__status { font-size:11px; padding:3px 8px; border-radius:12px; font-weight:600; }
+    .status-confirmed   { background:#dcfce7; color:#15803d; }
+    .status-pending     { background:#fef9c3; color:#854d0e; }
+    .status-cancelled   { background:#fee2e2; color:#b91c1c; }
+    .status-completed   { background:#e0f2fe; color:#0369a1; }
+    .appt-row__cal { font-size:11px; }
+    .cal-synced { color:var(--sage); }
+    .cal-unsynced { color:var(--muted); }
+
+    /* ── Modal ─────────────────────────────────────────────── */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      opacity:0; pointer-events:none; transition:.2s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal {
+      background:#fff; border-radius:16px; width:100%; max-width:560px;
+      max-height:90vh; overflow-y:auto; padding:28px;
+      transform:translateY(12px); transition:.2s;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .modal-header h2 { font-size:18px; font-weight:700; margin:0; }
+    .modal-close { border:none; background:none; font-size:20px; cursor:pointer; color:var(--muted); padding:4px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:7px;
+      font-size:14px; color:var(--text); background:#fff; box-sizing:border-box;
+      transition:.15s; font-family:inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline:none; border-color:var(--wine); box-shadow:0 0 0 3px rgba(107,45,62,.08);
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .modal-footer { display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
+    .modal-footer__left { display:flex; gap:8px; }
+    .cal-badge { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--sage); font-weight:500; }
+    .cal-badge svg { flex-shrink:0; }
+
+    /* ── Toast ─────────────────────────────────────────────── */
+    .toast {
+      position:fixed; bottom:24px; right:24px; z-index:9999;
+      background:#1a1a1a; color:#fff; padding:12px 20px; border-radius:8px;
+      font-size:13px; font-weight:500; transform:translateY(80px); opacity:0;
+      transition:.3s; max-width:320px; box-shadow:0 4px 16px rgba(0,0,0,.2);
+    }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:var(--sage); }
+    .toast.error   { background:#dc2626; }
+
+    /* ── Now line ─────────────────────────────────────────────── */
+    .now-line {
+      position:absolute; left:0; right:0; height:2px; background:var(--wine); z-index:5;
+      pointer-events:none;
+    }
+    .now-line::before {
+      content:''; position:absolute; left:-4px; top:-4px;
+      width:10px; height:10px; border-radius:50%; background:var(--wine);
+    }
+
+    /* ── Empty state ─────────────────────────────────────────── */
+    .empty { text-align:center; padding:60px 20px; color:var(--muted); }
+    .empty svg { opacity:.3; margin-bottom:16px; }
+    .empty p { font-size:15px; margin:0; }
+
+    @media(max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-name">Animist Apothecary</div>
+      <div class="sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="index.html">Dashboard</a>
+      <a href="clients.html">Clients</a>
+      <a href="appointments.html" class="active">Appointments</a>
+      <a href="services.html">Services</a>
+      <a href="mentorship.html">Mentorship</a>
+      <a href="payments.html">Payments</a>
+      <a href="intake-forms.html">Intake Forms</a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="sidebar__user-name" id="userName">—</div>
+      <div class="sidebar__user-email" id="userEmail">—</div>
+      <a class="sidebar__signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <div class="page-header">
+      <h1>Appointments</h1>
+      <div class="page-header__actions">
+        <div class="view-toggle">
+          <button id="btnWeek" class="active" onclick="setView('week')">Week</button>
+          <button id="btnMonth" onclick="setView('month')">Month</button>
+          <button id="btnList" onclick="setView('list')">List</button>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">+ New</button>
+      </div>
+    </div>
+
+    <!-- Calendar navigation -->
+    <div class="cal-nav">
+      <button onclick="navPrev()">&#8249;</button>
+      <button onclick="navNext()">&#8250;</button>
+      <div class="cal-nav__title" id="calTitle"></div>
+      <button class="cal-nav__today" onclick="navToday()">Today</button>
+    </div>
+
+    <!-- Calendar views -->
+    <div id="viewWeek"></div>
+    <div id="viewMonth" style="display:none"></div>
+    <div id="viewList" style="display:none"></div>
+  </main>
+</div>
+
+<!-- Appointment modal -->
+<div class="modal-overlay" id="apptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">New Appointment</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client</label>
+        <select id="fClient"><option value="">Select client…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Service</label>
+        <select id="fService" onchange="onServiceChange()"><option value="">Select service…</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="fDate">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input type="time" id="fTime" value="10:00">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Duration (minutes)</label>
+        <input type="number" id="fDuration" value="60" min="15" step="15">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fStatus">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Location</label>
+      <input type="text" id="fLocation" placeholder="Topanga Canyon studio, Zoom, etc.">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="fNotes" placeholder="Session notes, intentions, follow-up…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer__left">
+        <button class="btn btn-danger btn-sm" id="deleteBtn" onclick="deleteAppt()" style="display:none">Delete</button>
+        <span class="cal-badge" id="calBadge" style="display:none">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Synced to Google Calendar
+        </span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAppt()" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script src="../shared/calendar-service.js"></script>
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let view = 'week';
+let cursor = new Date();
+cursor.setHours(0,0,0,0);
+
+let appointments = [];   // raw from Supabase
+let clients = [];
+let services = [];
+let editingId = null;    // null = new, string = editing
+
+const CATEGORY_CLASS = {
+  somatic:    'cat-somatic',
+  ceremonial: 'cat-ceremonial',
+  divination: 'cat-divination',
+  mentorship: 'cat-mentorship',
+  massage:    'cat-massage',
+  breathwork: 'cat-breathwork',
+  guidance:   'cat-guidance',
+};
+
+function catClass(category, status) {
+  if (status === 'cancelled') return 'cat-cancelled';
+  return CATEGORY_CLASS[category?.toLowerCase()] || 'cat-default';
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+requireAuth(async function(user, sb) {
+  document.getElementById('userName').textContent = user.user_metadata?.full_name || user.email.split('@')[0];
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    window.location.href = '../login.html';
+  });
+
+  await Promise.all([loadClients(), loadServices()]);
+  await loadAppointments();
+  render();
+});
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+async function loadClients() {
+  const { data } = await window.adminSupabase
+    .from('clients').select('id, full_name').eq('is_archived', false).order('full_name');
+  clients = data || [];
+  const sel = document.getElementById('fClient');
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.forEach(c => sel.innerHTML += `<option value="${c.id}">${esc(c.full_name)}</option>`);
+}
+
+async function loadServices() {
+  const { data } = await window.adminSupabase
+    .from('services').select('id, name, category, duration_minutes').eq('is_archived', false).order('name');
+  services = data || [];
+  const sel = document.getElementById('fService');
+  sel.innerHTML = '<option value="">Select service…</option>';
+  services.forEach(s => sel.innerHTML += `<option value="${s.id}" data-dur="${s.duration_minutes}" data-cat="${s.category}">${esc(s.name)}</option>`);
+}
+
+async function loadAppointments() {
+  // Determine date range for current view
+  const { start, end } = viewRange();
+  const { data, error } = await window.adminSupabase
+    .from('appointments')
+    .select(`
+      id, scheduled_at, duration_minutes, status, location, notes, google_event_id, google_meet_link,
+      clients(id, full_name),
+      services(id, name, category, duration_minutes)
+    `)
+    .gte('scheduled_at', start.toISOString())
+    .lte('scheduled_at', end.toISOString())
+    .eq('is_archived', false)
+    .order('scheduled_at');
+  if (error) { showToast('Failed to load appointments', 'error'); return; }
+  appointments = data || [];
+}
+
+function viewRange() {
+  if (view === 'week') {
+    const start = weekStart(cursor);
+    const end = new Date(start); end.setDate(end.getDate() + 7);
+    return { start, end };
+  }
+  if (view === 'month') {
+    const start = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+    const end = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+    return { start, end };
+  }
+  // list: 60-day window
+  const start = new Date(); start.setDate(start.getDate() - 7);
+  const end = new Date(); end.setDate(end.getDate() + 60);
+  return { start, end };
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render() {
+  updateTitle();
+  if (view === 'week')  renderWeek();
+  if (view === 'month') renderMonth();
+  if (view === 'list')  renderList();
+}
+
+function updateTitle() {
+  const opts = { month: 'long', year: 'numeric' };
+  if (view === 'week') {
+    const ws = weekStart(cursor);
+    const we = new Date(ws); we.setDate(we.getDate() + 6);
+    document.getElementById('calTitle').textContent =
+      ws.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' +
+      we.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } else if (view === 'month') {
+    document.getElementById('calTitle').textContent =
+      cursor.toLocaleDateString('en-US', opts);
+  } else {
+    document.getElementById('calTitle').textContent = 'Upcoming Appointments';
+  }
+}
+
+// ── Week view ─────────────────────────────────────────────────────────────────
+const HOUR_H = 48; // px per hour
+const DAY_START = 7; // 7am
+const HOURS_SHOWN = 14; // 7am – 9pm
+
+function renderWeek() {
+  const ws = weekStart(cursor);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = Array.from({length:7}, (_,i) => { const d = new Date(ws); d.setDate(d.getDate()+i); return d; });
+
+  let html = `<div class="week-grid">`;
+  // Header
+  html += `<div class="week-grid__header-cell" style="border-bottom:1px solid var(--border)"></div>`;
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  days.forEach(d => {
+    const isToday = d.getTime() === today.getTime();
+    html += `<div class="week-grid__header-cell${isToday?' today':''}">
+      <div class="day-name">${DAY_NAMES[d.getDay()]}</div>
+      <div class="day-num">${d.getDate()}</div>
+    </div>`;
+  });
+
+  // Time col + day cols
+  html += `<div class="week-grid__time-col">`;
+  for (let h = DAY_START; h < DAY_START + HOURS_SHOWN + 1; h++) {
+    const label = h === 12 ? '12pm' : h > 12 ? `${h-12}pm` : `${h}am`;
+    html += `<div class="week-grid__time-slot"><span>${label}</span></div>`;
+  }
+  html += `</div>`;
+
+  days.forEach((d, di) => {
+    html += `<div class="week-grid__day-col" id="day-col-${di}">`;
+    // Hour lines
+    for (let h = 0; h < HOURS_SHOWN; h++) {
+      html += `<div class="week-grid__hour-line" style="top:${h*HOUR_H}px"></div>`;
+      html += `<div class="week-grid__half-line" style="top:${h*HOUR_H+HOUR_H/2}px"></div>`;
+    }
+
+    // Appointments for this day
+    const dayAppts = appointments.filter(a => {
+      const ad = new Date(a.scheduled_at); ad.setHours(0,0,0,0);
+      return ad.getTime() === d.getTime();
+    });
+
+    dayAppts.forEach(a => {
+      const at = new Date(a.scheduled_at);
+      const startH = at.getHours() + at.getMinutes()/60;
+      const dur = a.duration_minutes || a.services?.duration_minutes || 60;
+      const top = Math.max(0, (startH - DAY_START) * HOUR_H);
+      const height = Math.max(20, (dur / 60) * HOUR_H - 3);
+      const cat = catClass(a.services?.category, a.status);
+      const timeStr = at.toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
+      const calIcon = a.google_event_id ? '📅' : '';
+      html += `<div class="appt-chip ${cat}" style="top:${top}px;height:${height}px" onclick="openModal('${a.id}')">
+        <div class="appt-chip__title">${esc(a.services?.name||'Session')}</div>
+        <div class="appt-chip__sub">${esc(a.clients?.full_name||'')} ${timeStr}</div>
+        ${a.google_event_id ? `<div class="appt-chip__cal">${calIcon}</div>` : ''}
+      </div>`;
+    });
+
+    // Today's now line
+    if (d.getTime() === today.getTime()) {
+      const now = new Date();
+      const nowH = now.getHours() + now.getMinutes()/60;
+      if (nowH >= DAY_START && nowH <= DAY_START + HOURS_SHOWN) {
+        html += `<div class="now-line" style="top:${(nowH-DAY_START)*HOUR_H}px"></div>`;
+      }
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+  document.getElementById('viewWeek').innerHTML = html;
+
+  // Scroll to 8am
+  setTimeout(() => {
+    const col = document.getElementById('day-col-0');
+    if (col) {
+      const container = col.closest('.main') || document.querySelector('.main');
+      if (container) container.scrollTop = (8 - DAY_START) * HOUR_H;
+    }
+  }, 50);
+}
+
+// ── Month view ────────────────────────────────────────────────────────────────
+function renderMonth() {
+  const year = cursor.getFullYear(), month = cursor.getMonth();
+  const first = new Date(year, month, 1);
+  const startDay = first.getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let html = `<div class="month-grid">
+    <div class="month-grid__header">
+      ${DAY_NAMES.map(d=>`<div class="month-grid__header-cell">${d}</div>`).join('')}
+    </div>
+    <div class="month-grid__body">`;
+
+  // Leading blanks
+  for (let i = 0; i < startDay; i++) {
+    const d = new Date(year, month, -startDay+i+1);
+    html += `<div class="month-grid__day other-month"><div class="month-grid__day-num">${d.getDate()}</div></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d);
+    const isToday = date.getTime() === today.getTime();
+    const dayAppts = appointments.filter(a => {
+      const ad = new Date(a.scheduled_at); ad.setHours(0,0,0,0);
+      return ad.getTime() === date.getTime();
+    });
+
+    html += `<div class="month-grid__day${isToday?' today':''}">
+      <div class="month-grid__day-num">${d}</div>`;
+    dayAppts.slice(0,3).forEach(a => {
+      const cat = catClass(a.services?.category, a.status);
+      html += `<div class="month-appt ${cat}" onclick="openModal('${a.id}')">${esc(a.services?.name||'Session')}</div>`;
+    });
+    if (dayAppts.length > 3) {
+      html += `<div class="month-more">+${dayAppts.length-3} more</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Trailing blanks
+  const total = startDay + daysInMonth;
+  const trail = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let i = 1; i <= trail; i++) {
+    html += `<div class="month-grid__day other-month"><div class="month-grid__day-num">${i}</div></div>`;
+  }
+
+  html += `</div></div>`;
+  document.getElementById('viewMonth').innerHTML = html;
+}
+
+// ── List view ─────────────────────────────────────────────────────────────────
+function renderList() {
+  if (!appointments.length) {
+    document.getElementById('viewList').innerHTML = `<div class="empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <p>No upcoming appointments.</p>
+    </div>`;
+    return;
+  }
+
+  const html = `<div class="appt-list">` +
+    appointments.map(a => {
+      const at = new Date(a.scheduled_at);
+      const cat = catClass(a.services?.category, a.status);
+      const dateStr = at.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+      const timeStr = at.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+      const statusCls = `status-${a.status}`;
+      const calMark = a.google_event_id
+        ? `<span class="cal-synced" title="Synced to Google Calendar">📅</span>`
+        : `<span class="cal-unsynced" title="Not synced">○</span>`;
+      return `<div class="appt-row" onclick="openModal('${a.id}')">
+        <div class="appt-row__time">
+          <div class="appt-row__date">${dateStr}</div>
+          <div class="appt-row__hour">${timeStr}</div>
+        </div>
+        <div class="appt-row__dot" style="background:currentColor" class="${cat}"></div>
+        <div class="appt-row__info">
+          <div class="appt-row__title">${esc(a.services?.name||'Session')}</div>
+          <div class="appt-row__sub">${esc(a.clients?.full_name||'')}${a.location ? ' · ' + esc(a.location) : ''}</div>
+        </div>
+        <span class="appt-row__status ${statusCls}">${a.status}</span>
+        <span class="appt-row__cal">${calMark}</span>
+      </div>`;
+    }).join('') + `</div>`;
+  document.getElementById('viewList').innerHTML = html;
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function setView(v) {
+  view = v;
+  ['week','month','list'].forEach(vv => {
+    document.getElementById(`view${cap(vv)}`).style.display = vv === v ? '' : 'none';
+    document.getElementById(`btn${cap(vv)}`).classList.toggle('active', vv === v);
+  });
+  loadAppointments().then(render);
+}
+
+async function navPrev() {
+  if (view === 'week')  cursor.setDate(cursor.getDate() - 7);
+  if (view === 'month') cursor.setMonth(cursor.getMonth() - 1);
+  if (view === 'list')  cursor.setDate(cursor.getDate() - 30);
+  await loadAppointments(); render();
+}
+async function navNext() {
+  if (view === 'week')  cursor.setDate(cursor.getDate() + 7);
+  if (view === 'month') cursor.setMonth(cursor.getMonth() + 1);
+  if (view === 'list')  cursor.setDate(cursor.getDate() + 30);
+  await loadAppointments(); render();
+}
+async function navToday() {
+  cursor = new Date(); cursor.setHours(0,0,0,0);
+  await loadAppointments(); render();
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+async function openModal(id) {
+  editingId = id || null;
+  document.getElementById('modalTitle').textContent = id ? 'Edit Appointment' : 'New Appointment';
+  document.getElementById('deleteBtn').style.display = id ? '' : 'none';
+  document.getElementById('calBadge').style.display = 'none';
+
+  if (id) {
+    const a = appointments.find(x => x.id === id);
+    if (a) {
+      document.getElementById('fClient').value = a.client_id || a.clients?.id || '';
+      document.getElementById('fService').value = a.service_id || a.services?.id || '';
+      const at = new Date(a.scheduled_at);
+      document.getElementById('fDate').value = at.toISOString().slice(0,10);
+      document.getElementById('fTime').value = at.toTimeString().slice(0,5);
+      document.getElementById('fDuration').value = a.duration_minutes || 60;
+      document.getElementById('fStatus').value = a.status || 'confirmed';
+      document.getElementById('fLocation').value = a.location || '';
+      document.getElementById('fNotes').value = a.notes || '';
+      if (a.google_event_id) document.getElementById('calBadge').style.display = 'inline-flex';
+    }
+  } else {
+    document.getElementById('fClient').value = '';
+    document.getElementById('fService').value = '';
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+    document.getElementById('fDate').value = tomorrow.toISOString().slice(0,10);
+    document.getElementById('fTime').value = '10:00';
+    document.getElementById('fDuration').value = '60';
+    document.getElementById('fStatus').value = 'confirmed';
+    document.getElementById('fLocation').value = '';
+    document.getElementById('fNotes').value = '';
+  }
+
+  document.getElementById('apptModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('apptModal').classList.remove('open');
+}
+
+function onServiceChange() {
+  const opt = document.getElementById('fService').selectedOptions[0];
+  if (opt && opt.dataset.dur) {
+    document.getElementById('fDuration').value = opt.dataset.dur;
+  }
+}
+
+async function saveAppt() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  const clientId = document.getElementById('fClient').value;
+  const serviceId = document.getElementById('fService').value;
+  const date = document.getElementById('fDate').value;
+  const time = document.getElementById('fTime').value;
+  const duration = parseInt(document.getElementById('fDuration').value) || 60;
+  const status = document.getElementById('fStatus').value;
+  const location = document.getElementById('fLocation').value.trim();
+  const notes = document.getElementById('fNotes').value.trim();
+
+  if (!clientId || !serviceId || !date || !time) {
+    showToast('Please fill in client, service, date, and time', 'error');
+    btn.textContent = 'Save'; btn.disabled = false;
+    return;
+  }
+
+  const scheduledAt = new Date(`${date}T${time}:00`).toISOString();
+  const payload = { client_id: clientId, service_id: serviceId, scheduled_at: scheduledAt,
+    duration_minutes: duration, status, location: location || null, notes: notes || null };
+
+  let apptId = editingId;
+  let calAction = 'upsert';
+
+  if (editingId) {
+    const { error } = await window.adminSupabase.from('appointments').update(payload).eq('id', editingId);
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+  } else {
+    const { data, error } = await window.adminSupabase.from('appointments').insert(payload).select().single();
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+    apptId = data.id;
+    calAction = 'create';
+  }
+
+  if (status === 'cancelled') calAction = 'delete';
+
+  // Sync to Google Calendar
+  try {
+    await calendarService._call(calAction, apptId);
+  } catch (e) {
+    console.warn('Calendar sync failed (non-fatal):', e);
+  }
+
+  closeModal();
+  await loadAppointments();
+  render();
+  showToast(editingId ? 'Appointment updated' : 'Appointment created', 'success');
+  btn.textContent = 'Save'; btn.disabled = false;
+}
+
+async function deleteAppt() {
+  if (!editingId) return;
+  if (!confirm('Delete this appointment? This cannot be undone.')) return;
+
+  // Remove from Google Calendar first
+  try { await calendarService.remove(editingId); } catch(e) { console.warn(e); }
+
+  const { error } = await window.adminSupabase.from('appointments').update({ is_archived: true }).eq('id', editingId);
+  if (error) { showToast('Delete failed', 'error'); return; }
+  closeModal();
+  await loadAppointments();
+  render();
+  showToast('Appointment deleted');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function weekStart(d) {
+  const s = new Date(d);
+  s.setDate(s.getDate() - s.getDay());
+  s.setHours(0,0,0,0);
+  return s;
+}
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show${type ? ' '+type : ''}`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Close modal on backdrop click
+document.getElementById('apptModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
