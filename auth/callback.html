@@ -51,26 +51,39 @@
 <script src="../shared/supabase.js"></script>
 <script>
 (function() {
-    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var DEST = '../admin/index.html';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { detectSessionInUrl: true, persistSession: true }
+    });
 
-    // Supabase puts the session in the URL hash after OAuth redirect.
-    // getSession() reads it automatically.
-    sb.auth.getSession().then(function(result) {
-        if (result.data.session) {
-            window.location.href = '../admin/index.html';
-        } else {
-            // No session — try once more after a short delay (token exchange timing)
-            setTimeout(function() {
-                sb.auth.getSession().then(function(r2) {
-                    if (r2.data.session) {
-                        window.location.href = '../admin/index.html';
-                    } else {
-                        window.location.href = '../login.html';
-                    }
-                });
-            }, 1500);
+    // onAuthStateChange fires as soon as Supabase processes the URL hash / PKCE code
+    var done = false;
+    var { data: { subscription } } = sb.auth.onAuthStateChange(function(event, session) {
+        if (done) return;
+        if (session) {
+            done = true;
+            subscription.unsubscribe();
+            window.location.href = DEST;
         }
     });
+
+    // Fallback: poll getSession for up to 5s
+    var attempts = 0;
+    function poll() {
+        if (done) return;
+        sb.auth.getSession().then(function(r) {
+            if (r.data.session) {
+                done = true;
+                window.location.href = DEST;
+            } else if (++attempts < 10) {
+                setTimeout(poll, 500);
+            } else {
+                // Give up — send back to login with an error hint
+                window.location.href = '../login.html?error=callback_timeout';
+            }
+        });
+    }
+    setTimeout(poll, 300);
 })();
 </script>
 </body>
