@@ -1,9 +1,9 @@
 {
-  "version": "v260310.01 7:35pm",
-  "release": 1,
-  "sha": "238af01",
-  "fullSha": "238af01d41b21c95a7636857ceca8247e47c139a",
+  "version": "v260310.02 7:40pm",
+  "release": 2,
+  "sha": "30e8d2b",
+  "fullSha": "30e8d2b954305d7c9db7a5433b4db5d9d2331f0c",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T00:35:17Z",
-  "commits": [{"sha": "238af01", "message": "feat: add Google Sign-In, login page, OAuth callback, and admin dashboard", "author": "Adi"}]
+  "pushedAt": "2026-03-10T00:40:26Z",
+  "commits": [{"sha": "30e8d2b", "message": "feat: add Resend email \u2014 edge function, secrets, client module, templates", "author": "Adi"}]
 }
