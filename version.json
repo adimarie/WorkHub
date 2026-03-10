@@ -1,9 +1,9 @@
 {
-  "version": "v260310.11 1:50pm",
-  "release": 11,
-  "sha": "740e597",
-  "fullSha": "740e597ca24f133b47aecda7c7279d0bb0f7f4d4",
+  "version": "v260310.12 1:55pm",
+  "release": 12,
+  "sha": "c57f356",
+  "fullSha": "c57f3564aa67a25a9b386f8dd769a3d0f6f37c3f",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:50:26Z",
-  "commits": [{"sha": "740e597", "message": "fix: create Adi's admin account + add WorkHub CRM link to dashboard", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:55:14Z",
+  "commits": [{"sha": "c57f356", "message": "fix: Google OAuth \u2014 correct site_url + whitelist GitHub Pages redirect URLs", "author": "Adi"}]
 }
