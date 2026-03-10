@@ -1,9 +1,9 @@
 {
-  "version": "v260309.03 6:16pm",
-  "release": 3,
-  "sha": "19e8339",
-  "fullSha": "19e8339e8d263bc2cc93e884565887aba4e8e4b9",
+  "version": "v260310.01 7:35pm",
+  "release": 1,
+  "sha": "238af01",
+  "fullSha": "238af01d41b21c95a7636857ceca8247e47c139a",
   "actor": "adimarie",
-  "pushedAt": "2026-03-09T23:16:34Z",
-  "commits": [{"sha": "19e8339", "message": "feat: connect Supabase + create practice management schema", "author": "Adi"}]
+  "pushedAt": "2026-03-10T00:35:17Z",
+  "commits": [{"sha": "238af01", "message": "feat: add Google Sign-In, login page, OAuth callback, and admin dashboard", "author": "Adi"}]
 }
