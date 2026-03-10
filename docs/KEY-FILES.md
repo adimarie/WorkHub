@@ -25,4 +25,15 @@
 - `npm run css:watch` — Watch mode for development
 - `scripts/bump-version.sh` — CI version bump (never run locally)
 
+## Email (`/shared/`, `/supabase/functions/`)
+
+- `shared/email-service.js` — `sendEmail(opts)` helper + `emailTemplates` (appointmentConfirmation, intakeFormInvitation, notification)
+- `supabase/functions/send-email/index.ts` — Edge function: POST `{ to, subject, html }` → Resend API
+
+## Auth Pages
+
+- `login.html` — Standalone login page (Google OAuth + email/password)
+- `auth/callback.html` — OAuth redirect handler → redirects to admin
+- `admin/index.html` — Protected admin dashboard with stat cards
+
 <!-- Add more key files as the project grows -->

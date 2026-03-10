@@ -23,9 +23,14 @@ When building or modifying any feature that calls a paid API, instrument it to l
   - Stripe: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/stripe-webhook`
   - Resend inbound: `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/resend-inbound-webhook`
 
-### Email (Resend)
-- API key stored as Supabase secret: `RESEND_API_KEY`
-- Free tier: 3,000 emails/month
+### Email (Resend) ✅
+- **From:** `notifications@bodyworkandbotanicals.com` (display: "Workhub")
+- **Secrets:** `RESEND_API_KEY`, `FROM_EMAIL` (stored in Supabase)
+- **Edge function:** `send-email` — POST `{ to, subject, html, text?, replyTo?, cc? }`
+- **Client module:** `shared/email-service.js` — `sendEmail(opts)` + `emailTemplates.*`
+- **Templates:** `appointmentConfirmation`, `intakeFormInvitation`, `notification`
+- **Free tier:** 3,000 emails/month
+- **Dashboard:** https://resend.com/emails
 
 ### SMS (Telnyx)
 - Config in `telnyx_config` table
