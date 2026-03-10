@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — The Animist Apothecary</title>
+  <meta name="description" content="Begin here. Schedule a 15-minute introductory call with Adi Marie — somatic bodywork, Dagara divinations, and ceremonial offerings in Topanga Canyon, LA.">
+  <link rel="stylesheet" href="styles/site.css">
+  <style>
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    .form-field {
+      margin-bottom: 20px;
+    }
+    .form-field label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-family: var(--font-sans);
+    }
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-warm);
+      background: var(--ivory);
+      color: var(--charcoal);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      outline: none;
+      transition: border-color var(--ease), box-shadow var(--ease);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239E7E34' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,168,75,0.12);
+    }
+    .form-field textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.65;
+    }
+    .radio-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 500px) {
+      .radio-group { grid-template-columns: 1fr; }
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius);
+      background: var(--ivory);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--brown);
+      transition: all var(--ease);
+    }
+    .radio-label:hover {
+      border-color: var(--gold);
+      background: rgba(200,168,75,0.04);
+    }
+    .radio-label input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--wine);
+    }
+    .radio-label input[type="radio"]:checked + span {
+      color: var(--wine-deep);
+      font-weight: 500;
+    }
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 40px;
+      border-radius: 100px;
+      background: var(--wine);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      border: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      margin-top: 8px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-submit:hover { background: var(--wine-deep); box-shadow: 0 8px 24px rgba(90,15,30,0.3); }
+
+    .thank-you {
+      display: none;
+      text-align: center;
+      padding: 64px 32px;
+    }
+    .thank-you.visible { display: block; }
+    .thank-you__glyph { font-size: 48px; margin-bottom: 24px; opacity: 0.7; }
+    .thank-you__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      color: var(--wine-deep);
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+    .thank-you__body { font-size: 1rem; color: var(--brown); }
+
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-warm);
+    }
+    .contact-info-item:last-child { border-bottom: none; }
+    .contact-info-item__icon {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 16px; flex-shrink: 0;
+    }
+    .contact-info-item__label {
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold-dim); font-weight: 500; margin-bottom: 4px;
+    }
+    .contact-info-item__value { font-size: 15px; color: var(--brown); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav" id="siteNav">
+  <div class="site-nav__inner">
+    <a href="index.html" class="site-nav__brand">
+      <span class="site-nav__brand-name">The Animist Apothecary</span>
+      <span class="site-nav__brand-sub">Bodywork + Botanicals</span>
+    </a>
+    <ul class="site-nav__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li class="site-nav__dropdown">
+        <span class="site-nav__dropdown-toggle">
+          Offerings
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+        <div class="site-nav__dropdown-menu">
+          <a href="mentorship.html">Mentorship Containers</a>
+          <a href="somatic-bodywork.html">Somatic Bodywork</a>
+          <a href="massage-therapy.html">Massage Therapy</a>
+          <a href="sacred-breath.html">Breathwork &amp; Sacred Breath</a>
+          <a href="divinations.html">Dagara Divinations</a>
+          <a href="guidance-counseling.html">Plàticas — Guidance &amp; Counsel</a>
+          <a href="single-sessions.html">Single Sessions</a>
+          <a href="gatherings.html">Group Gatherings</a>
+        </div>
+      </li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="site-nav__cta">Begin Here</a>
+    <button class="site-nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<nav class="site-nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="about.html">About Adi Marie</a>
+  <a href="mentorship.html">Mentorship Containers</a>
+  <a href="somatic-bodywork.html">Somatic Bodywork</a>
+  <a href="massage-therapy.html">Massage Therapy</a>
+  <a href="sacred-breath.html">Breathwork &amp; Sacred Breath</a>
+  <a href="divinations.html">Dagara Divinations</a>
+  <a href="guidance-counseling.html">Plàticas — Guidance &amp; Counsel</a>
+  <a href="single-sessions.html">Single Sessions &amp; Private Ceremonies</a>
+  <a href="gatherings.html">Group Gatherings</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" class="mobile-cta">Begin Here</a>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero__inner">
+      <span class="page-hero__eyebrow">Begin Here</span>
+      <h1 class="page-hero__title">Get in Touch</h1>
+      <p class="page-hero__desc">For new clients, let's schedule a 15-minute introductory call.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="content-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- FORM -->
+      <div>
+        <span class="section-label">Send a Message</span>
+        <h2 style="margin-bottom:32px;">Let's Begin</h2>
+
+        <!-- THANK YOU STATE (hidden by default) -->
+        <div class="thank-you" id="thankYou">
+          <div class="thank-you__glyph">✦</div>
+          <div class="thank-you__title">Thank you, I'll be in touch with you soon.</div>
+          <p class="thank-you__body">Your message has been received. I look forward to meeting you.</p>
+        </div>
+
+        <!-- FORM (shown by default) -->
+        <form id="contactForm">
+          <div class="form-field">
+            <label for="name">Name <span style="color:var(--wine);">*</span></label>
+            <input type="text" id="name" name="name" placeholder="Your full name" required>
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email <span style="color:var(--wine);">*</span></label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+
+          <div class="form-field">
+            <label for="phone">Phone <span style="color:var(--muted);font-style:italic;text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 (000) 000-0000">
+          </div>
+
+          <div class="form-field">
+            <label>Interested in</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Somatic Bodywork">
+                <span>Somatic Bodywork</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Eco Immersions">
+                <span>Eco Immersions</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Plant Medicines">
+                <span>Plant Medicines</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Ceremony">
+                <span>Ceremony</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Integration">
+                <span>Integration</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Guidance and Instruction">
+                <span>Guidance &amp; Instruction</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="interest" value="Other">
+                <span>Other / Not sure</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="message">Message <span style="color:var(--wine);">*</span></label>
+            <textarea id="message" name="message" placeholder="Share a little about what you are carrying and what you are hoping for…" required></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="referral">How did you hear about me?</label>
+            <select id="referral" name="referral">
+              <option value="" disabled selected>Select one…</option>
+              <option value="Referral">Referral</option>
+              <option value="Medicine Retreat">Medicine Retreat</option>
+              <option value="Event/Gathering">Event / Gathering</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Google Search">Google Search</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-submit">Send</button>
+        </form>
+      </div>
+
+      <!-- CONTACT INFO -->
+      <div>
+        <span class="section-label">Find Me</span>
+        <h2 style="margin-bottom:32px;">In Person &amp; Online</h2>
+
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">✦</div>
+          <div>
+            <div class="contact-info-item__label">Location</div>
+            <div class="contact-info-item__value">Topanga Canyon<br>Los Angeles, California</div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">☽</div>
+          <div>
+            <div class="contact-info-item__label">Hours</div>
+            <div class="contact-info-item__value">Wednesday – Sunday<br>10am – 6pm</div>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+          </div>
+          <div>
+            <div class="contact-info-item__label">Instagram</div>
+            <div class="contact-info-item__value">
+              <a href="https://instagram.com/ahtheemaree" target="_blank" rel="noopener" style="color:var(--gold);transition:color var(--ease);">@ahtheemaree</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:48px;padding:32px;background:var(--ivory);border:1px solid var(--border-warm);border-radius:var(--radius-xl);">
+          <h3 style="margin-bottom:12px;font-size:1.2rem;">New Clients</h3>
+          <p style="font-size:14px;color:var(--brown);line-height:1.75;margin-bottom:0;">
+            All new clients begin with a 15-minute introductory call. This is where we meet each other,
+            share what you are carrying, and discern what form of support best serves your season of life.
+            There is no obligation after the call.
+          </p>
+        </div>
+
+        <div style="margin-top:20px;padding:32px;background:var(--ivory);border:1px solid var(--border-warm);border-radius:var(--radius-xl);">
+          <h3 style="margin-bottom:12px;font-size:1.2rem;">Response Time</h3>
+          <p style="font-size:14px;color:var(--brown);line-height:1.75;margin-bottom:0;">
+            I read every message personally and respond within 48 hours. If you are in urgent need,
+            please note this in your message.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div class="container">
+    <div class="newsletter__inner">
+      <h2 class="newsletter__title">Water, Milk, and Honey</h2>
+      <p class="newsletter__sub">Gleanings from my Harvests — updates, poetry, sacred songs, and tender reflections</p>
+      <form class="newsletter__form" id="newsletterForm">
+        <input type="email" class="newsletter__input" placeholder="Your email address" required>
+        <button type="submit" class="newsletter__btn">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="footer-brand">
+      <div class="footer-brand__name">The Animist Apothecary</div>
+      <div class="footer-brand__sub">Bodywork + Botanicals</div>
+      <p class="footer-brand__bio">
+        A sanctuary of ancestral wisdom, somatic touch, and sacred ceremony in Topanga Canyon,
+        Los Angeles. Rooted in lineage. Devoted to the living body and the web of life.
+      </p>
+      <a href="https://instagram.com/ahtheemaree" class="footer-brand__instagram" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        @ahtheemaree
+      </a>
+    </div>
+    <div>
+      <div class="footer-col__title">Offerings</div>
+      <ul class="footer-col__links">
+        <li><a href="mentorship.html">Mentorship Containers</a></li>
+        <li><a href="somatic-bodywork.html">Somatic Bodywork</a></li>
+        <li><a href="massage-therapy.html">Massage Therapy</a></li>
+        <li><a href="sacred-breath.html">Breathwork &amp; Sacred Breath</a></li>
+        <li><a href="divinations.html">Dagara Divinations</a></li>
+        <li><a href="guidance-counseling.html">Plàticas</a></li>
+        <li><a href="single-sessions.html">Single Sessions</a></li>
+        <li><a href="gatherings.html">Group Gatherings</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col__title">Navigate</div>
+      <ul class="footer-col__links">
+        <li><a href="about.html">About Adi Marie</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Book an Intro Call</a></li>
+        <li><a href="https://instagram.com/ahtheemaree" target="_blank" rel="noopener">Instagram</a></li>
+      </ul>
+      <div class="footer-col__title mt-md">Location</div>
+      <p style="font-size:13px;color:rgba(245,240,232,0.4);line-height:1.6;">
+        Topanga Canyon<br>Los Angeles, California<br>Wed – Sun · 10am – 6pm
+      </p>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    <span>© 2026 The Animist Apothecary · Adi Marie</span>
+    <span style="color:rgba(245,240,232,0.25);">Topanga Canyon, CA</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="shared/supabase.js"></script>
+<script src="shared/auth.js"></script>
+<script>
+  var nav = document.getElementById('siteNav');
+  window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 20); });
+  document.getElementById('hamburger').addEventListener('click', function() { document.getElementById('mobileNav').classList.toggle('open'); });
+
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    this.style.display = 'none';
+    document.getElementById('thankYou').classList.add('visible');
+    window.scrollTo({ top: document.getElementById('contactForm').closest('section').offsetTop - 80, behavior: 'smooth' });
+  });
+
+  document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = this.querySelector('button');
+    btn.textContent = 'Thank you ✦';
+    btn.disabled = true;
+    this.querySelector('input').value = '';
+  });
+</script>
+</body>
+</html>
