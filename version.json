@@ -1,9 +1,9 @@
 {
-  "version": "v260310.06 11:52pm",
-  "release": 6,
-  "sha": "a212c32",
-  "fullSha": "a212c3218fb883a9ce1f9f14647f75bee025d479",
+  "version": "v260310.07 1:14pm",
+  "release": 7,
+  "sha": "25a8e57",
+  "fullSha": "25a8e571b29e97d9bb0fdbc602c3ef91cd940a11",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T04:52:49Z",
-  "commits": [{"sha": "a212c32", "message": "docs: add BUILD-SUMMARY.md \u2014 complete record of everything built", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:14:13Z",
+  "commits": [{"sha": "25a8e57", "message": "feat: Google Calendar CRM integration + visual appointments admin", "author": "Adi"}]
 }
