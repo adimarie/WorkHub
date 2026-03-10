@@ -25,6 +25,11 @@
 - `npm run css:watch` — Watch mode for development
 - `scripts/bump-version.sh` — CI version bump (never run locally)
 
+## AI (`/shared/`, `/supabase/functions/`)
+
+- `shared/ai-service.js` — `ai(prompt, opts?)` + `aiHelpers` (draftMessage, summarizeNotes, suggestIntakeQuestions, writeServiceDescription)
+- `supabase/functions/gemini/index.ts` — Edge function: POST `{ prompt }` → Gemini API, pre-loaded with practice system context
+
 ## Email (`/shared/`, `/supabase/functions/`)
 
 - `shared/email-service.js` — `sendEmail(opts)` helper + `emailTemplates` (appointmentConfirmation, intakeFormInvitation, notification)

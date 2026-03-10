@@ -51,8 +51,15 @@ When building or modifying any feature that calls a paid API, instrument it to l
 - Edge function: `signwell-webhook` (deploy with `--no-verify-jwt`)
 - Free tier: 3-25 docs/month
 
-### AI Features (Google Gemini)
-- Free tier: 1,000 requests/day, 15 RPM
+### AI Features (Google Gemini) ✅
+- **Model:** `gemini-2.0-flash` (default)
+- **Secret:** `GEMINI_API_KEY` (stored in Supabase)
+- **Edge function:** `gemini` — POST `{ prompt, systemPrompt?, model?, temperature?, maxTokens? }`
+- **Client module:** `shared/ai-service.js` — `ai(prompt, opts?)` + `aiHelpers.*`
+- **Practice helpers:** `draftMessage`, `summarizeNotes`, `suggestIntakeQuestions`, `writeServiceDescription`
+- **System context:** pre-loaded with somatic/ceremonial practice persona
+- **Free tier:** 1,500 req/day, 15 RPM (Gemini 2.0 Flash)
+- **Dashboard:** https://aistudio.google.com/
 
 ### Object Storage (Cloudflare R2)
 - Free tier: 10 GB storage, 10M reads/mo, 1M writes/mo, zero egress
