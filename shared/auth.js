@@ -1,6 +1,5 @@
-// auth.js — AlpacApps shared auth module
-// Profile button, login modal, and Supabase Auth integration
-// Reads config from shared/supabase.js globals (SUPABASE_URL, SUPABASE_ANON_KEY)
+// auth.js — Workhub shared auth module
+// Profile button, login modal, Google OAuth, and page guard
 //
 // Usage:
 //   1. Include Supabase CDN + supabase.js + auth.js on every page
@@ -11,17 +10,15 @@
 (function() {
     'use strict';
 
-    // Wait for Supabase client — expects supabase.js to define SUPABASE_URL + SUPABASE_ANON_KEY
     if (typeof window.supabase === 'undefined') {
         console.warn('[auth] Supabase JS SDK not loaded');
         return;
     }
 
-    // Read config from supabase.js globals (set by each project's shared/supabase.js)
     var url = window.SUPABASE_URL;
     var key = window.SUPABASE_ANON_KEY;
     if (!url || !key) {
-        console.warn('[auth] SUPABASE_URL or SUPABASE_ANON_KEY not defined. Include shared/supabase.js before auth.js.');
+        console.warn('[auth] SUPABASE_URL or SUPABASE_ANON_KEY not defined.');
         return;
     }
 
@@ -61,6 +58,35 @@
     }
 
     // =============================================
+    // GOOGLE SIGN-IN
+    // =============================================
+
+    window.signInWithGoogle = function() {
+        var base = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '');
+        // Walk up to site root for the callback URL
+        var depth = (window.location.pathname.match(/\//g) || []).length - 1;
+        var root = window.location.origin;
+        var pathParts = window.location.pathname.split('/').filter(Boolean);
+        // GitHub Pages: first path segment is the repo name
+        if (pathParts.length > 0) {
+            root = window.location.origin + '/' + pathParts[0];
+        }
+        var callbackUrl = root + '/auth/callback.html';
+
+        sb.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: callbackUrl,
+                queryParams: { access_type: 'offline', prompt: 'consent' }
+            }
+        }).then(function(result) {
+            if (result.error) {
+                showToast('Sign-in failed: ' + result.error.message, 'error');
+            }
+        });
+    };
+
+    // =============================================
     // PROFILE BUTTON (NAV)
     // =============================================
 
@@ -88,18 +114,20 @@
 
     function renderLoggedIn(wrapper, user) {
         var displayName = (user.user_metadata && user.user_metadata.full_name) || user.email;
+        var avatarUrl = user.user_metadata && user.user_metadata.avatar_url;
         var initials = getInitials(displayName);
 
-        // Determine admin link path (relative to current page)
         var adminHref = 'admin/index.html';
         if (window.location.pathname.indexOf('/admin/') !== -1) {
-            adminHref = 'index.html';
+            adminHref = '../admin/index.html';
         }
 
+        var avatarHtml = avatarUrl
+            ? '<img src="' + escapeHtml(avatarUrl) + '" alt="' + escapeHtml(displayName) + '" class="auth-avatar auth-avatar--photo" id="authAvatarBtn" style="width:32px;height:32px;border-radius:50%;object-fit:cover;cursor:pointer;border:2px solid var(--aap-gold);">'
+            : '<button class="auth-avatar auth-avatar--initials" id="authAvatarBtn" aria-haspopup="true" aria-expanded="false" title="' + escapeHtml(displayName) + '">' + initials + '</button>';
+
         wrapper.innerHTML =
-            '<button class="auth-avatar auth-avatar--initials" id="authAvatarBtn" aria-haspopup="true" aria-expanded="false" title="' + escapeHtml(displayName) + '">' +
-                initials +
-            '</button>' +
+            avatarHtml +
             '<div class="auth-dropdown" id="authDropdown">' +
                 '<div class="auth-dropdown__user">' + escapeHtml(displayName) + '</div>' +
                 '<div class="auth-dropdown__divider"></div>' +
@@ -120,12 +148,12 @@
             e.stopPropagation();
             var isOpen = dropdown.classList.contains('auth-dropdown--open');
             dropdown.classList.toggle('auth-dropdown--open', !isOpen);
-            avatarBtn.setAttribute('aria-expanded', !isOpen);
+            if (avatarBtn.setAttribute) avatarBtn.setAttribute('aria-expanded', !isOpen);
         });
 
         document.addEventListener('click', function() {
             dropdown.classList.remove('auth-dropdown--open');
-            avatarBtn.setAttribute('aria-expanded', 'false');
+            if (avatarBtn.setAttribute) avatarBtn.setAttribute('aria-expanded', 'false');
         });
 
         wrapper.querySelector('#authSignOutBtn').addEventListener('click', function(e) {
@@ -134,7 +162,6 @@
                 currentUser = null;
                 renderLoggedOut(wrapper);
                 showToast('Signed out', 'success');
-                // Redirect away from admin pages
                 if (window.location.pathname.indexOf('/admin/') !== -1) {
                     window.location.href = '../index.html';
                 }
@@ -143,7 +170,7 @@
     }
 
     // =============================================
-    // LOGIN MODAL
+    // LOGIN MODAL (email/password fallback)
     // =============================================
 
     function openLoginModal() {
@@ -159,8 +186,18 @@
                 '<button class="auth-modal__close" id="authModalClose" aria-label="Close">&times;</button>' +
                 '<div class="auth-modal__header">' +
                     '<h2 class="auth-modal__title">Sign In</h2>' +
-                    '<p class="auth-modal__subtitle">Authorized administrators only</p>' +
+                    '<p class="auth-modal__subtitle">Practitioner access only</p>' +
                 '</div>' +
+                '<button class="auth-modal__google" id="authGoogleBtn" type="button">' +
+                    '<svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0">' +
+                        '<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>' +
+                        '<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>' +
+                        '<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>' +
+                        '<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>' +
+                    '</svg>' +
+                    'Continue with Google' +
+                '</button>' +
+                '<div class="auth-modal__divider"><span>or</span></div>' +
                 '<form class="auth-modal__form" id="authLoginForm">' +
                     '<div class="auth-modal__field">' +
                         '<label for="authEmail">Email</label>' +
@@ -176,11 +213,15 @@
             '</div>';
 
         document.body.appendChild(modal);
-        setTimeout(function() { document.getElementById('authEmail').focus(); }, 100);
 
         document.getElementById('authModalBackdrop').addEventListener('click', closeLoginModal);
         document.getElementById('authModalClose').addEventListener('click', closeLoginModal);
         document.addEventListener('keydown', handleModalEsc);
+
+        document.getElementById('authGoogleBtn').addEventListener('click', function() {
+            closeLoginModal();
+            window.signInWithGoogle();
+        });
 
         document.getElementById('authLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -232,29 +273,32 @@
     // =============================================
 
     /**
-     * Guard an admin page. If not authenticated, redirects to ../index.html.
+     * Guard an admin page. If not authenticated, redirects to login.html.
      * @param {Function} callback - Called with (user, supabaseClient) when authenticated.
      */
     window.requireAuth = function(callback) {
+        // Show loading state immediately
+        var body = document.body;
+        body.style.visibility = 'hidden';
+
         sb.auth.getSession().then(function(result) {
             if (result.data.session && result.data.session.user) {
                 currentUser = result.data.session.user;
+                body.style.visibility = 'visible';
                 if (callback) callback(currentUser, sb);
             } else {
-                window.location.href = '../index.html';
+                window.location.href = '../login.html';
             }
         });
     };
 
-    // Expose supabase client for admin pages
     window.adminSupabase = sb;
 
     // =============================================
-    // INIT
+    // INIT (public pages)
     // =============================================
 
     function insertAuthWidget() {
-        // Look for nav container: .site-nav__inner, or first nav's first child, or first <header>
         var navInner = document.querySelector('.site-nav__inner') ||
                        (document.querySelector('nav') && document.querySelector('nav').firstElementChild);
         if (!navInner) return;
@@ -273,7 +317,6 @@
             renderLoggedOut(widget);
         });
 
-        // Listen for auth changes (login/logout from another tab)
         sb.auth.onAuthStateChange(function(event, session) {
             if (event === 'SIGNED_IN' && session && session.user) {
                 currentUser = session.user;

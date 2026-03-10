@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing in… — Workhub</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Georgia, serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F5F0E8;
+            color: #5C4A32;
+        }
+        .callback-card {
+            text-align: center;
+            padding: 48px 40px;
+        }
+        .callback-card__mark {
+            font-size: 48px;
+            margin-bottom: 16px;
+            animation: breathe 2s ease-in-out infinite;
+        }
+        .callback-card__title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #5A0F1E;
+            margin-bottom: 8px;
+        }
+        .callback-card__text {
+            font-size: 14px;
+            color: #8A7668;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+<div class="callback-card">
+    <div class="callback-card__mark">🌿</div>
+    <h1 class="callback-card__title">Signing you in…</h1>
+    <p class="callback-card__text">You'll be redirected to your dashboard in a moment.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script>
+(function() {
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Supabase puts the session in the URL hash after OAuth redirect.
+    // getSession() reads it automatically.
+    sb.auth.getSession().then(function(result) {
+        if (result.data.session) {
+            window.location.href = '../admin/index.html';
+        } else {
+            // No session — try once more after a short delay (token exchange timing)
+            setTimeout(function() {
+                sb.auth.getSession().then(function(r2) {
+                    if (r2.data.session) {
+                        window.location.href = '../admin/index.html';
+                    } else {
+                        window.location.href = '../login.html';
+                    }
+                });
+            }, 1500);
+        }
+    });
+})();
+</script>
+</body>
+</html>

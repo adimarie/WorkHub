@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Workhub</title>
+    <link rel="stylesheet" href="../shared/admin.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Georgia, serif; background: var(--aap-bg); color: var(--aap-text); }
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--aap-surface); border-bottom: 1px solid var(--aap-border);
+            height: 60px; display: flex; align-items: center; padding: 0 24px;
+            box-shadow: var(--aap-shadow-sm);
+        }
+        .site-nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; gap: 16px;
+        }
+        .site-nav__brand {
+            font-size: 1.1rem; font-weight: 700; color: var(--aap-accent-deep);
+            text-decoration: none; letter-spacing: 0.01em;
+        }
+        .admin-greeting { font-size: 13px; color: var(--aap-text-dim); margin-left: auto; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="site-nav__inner">
+        <a href="../index.html" class="site-nav__brand">🌿 Workhub</a>
+        <span class="admin-greeting" id="greeting"></span>
+    </div>
+</nav>
+
+<div class="admin-layout">
+    <div class="admin-topbar">
+        <span class="admin-topbar__label">ADMIN</span>
+        <nav class="admin-topbar__nav">
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="clients.html">Clients</a>
+            <a href="appointments.html">Appointments</a>
+            <a href="services.html">Services</a>
+            <a href="mentorship.html">Mentorship</a>
+            <a href="payments.html">Payments</a>
+        </nav>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-page-header">
+            <h1>Dashboard</h1>
+            <p>Your practice at a glance</p>
+        </div>
+
+        <div class="admin-stats" id="stats">
+            <div class="admin-stat">
+                <div class="admin-stat__icon">🌱</div>
+                <div class="admin-stat__value" id="statClients">—</div>
+                <div class="admin-stat__label">Clients</div>
+            </div>
+            <div class="admin-stat">
+                <div class="admin-stat__icon">🗓</div>
+                <div class="admin-stat__value" id="statAppts">—</div>
+                <div class="admin-stat__label">Upcoming appointments</div>
+            </div>
+            <div class="admin-stat">
+                <div class="admin-stat__icon">🔮</div>
+                <div class="admin-stat__value" id="statContainers">—</div>
+                <div class="admin-stat__label">Active mentorship containers</div>
+            </div>
+            <div class="admin-stat">
+                <div class="admin-stat__icon">✨</div>
+                <div class="admin-stat__value" id="statServices">—</div>
+                <div class="admin-stat__label">Offerings</div>
+            </div>
+        </div>
+
+        <div class="admin-cards">
+            <a href="clients.html" class="admin-card">
+                <div class="admin-card__icon">🌱</div>
+                <div>
+                    <div class="admin-card__title">Clients</div>
+                    <div class="admin-card__desc">Manage client records, notes, tags, and intake forms</div>
+                </div>
+            </a>
+            <a href="appointments.html" class="admin-card">
+                <div class="admin-card__icon">🗓</div>
+                <div>
+                    <div class="admin-card__title">Appointments</div>
+                    <div class="admin-card__desc">Schedule and track somatic sessions, ceremonies, and calls</div>
+                </div>
+            </a>
+            <a href="services.html" class="admin-card">
+                <div class="admin-card__icon">🌸</div>
+                <div>
+                    <div class="admin-card__title">Services & Offerings</div>
+                    <div class="admin-card__desc">Define your offerings, durations, and pricing</div>
+                </div>
+            </a>
+            <a href="mentorship.html" class="admin-card">
+                <div class="admin-card__icon">🔮</div>
+                <div>
+                    <div class="admin-card__title">Mentorship Containers</div>
+                    <div class="admin-card__desc">Manage ongoing mentorship packages and session tracking</div>
+                </div>
+            </a>
+            <a href="payments.html" class="admin-card">
+                <div class="admin-card__icon">💫</div>
+                <div>
+                    <div class="admin-card__title">Payments</div>
+                    <div class="admin-card__desc">Track payments, invoices, and financial records</div>
+                </div>
+            </a>
+            <a href="intake-forms.html" class="admin-card">
+                <div class="admin-card__icon">📋</div>
+                <div>
+                    <div class="admin-card__title">Intake Forms</div>
+                    <div class="admin-card__desc">Review and manage client intake submissions</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+requireAuth(function(user, sb) {
+    // Greet
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Practitioner';
+    var firstName = name.split(' ')[0];
+    document.getElementById('greeting').textContent = 'Welcome, ' + firstName;
+
+    // Load stats
+    var now = new Date().toISOString();
+
+    Promise.all([
+        sb.from('clients').select('id', { count: 'exact', head: true }).eq('is_archived', false),
+        sb.from('appointments').select('id', { count: 'exact', head: true }).eq('is_archived', false).gte('scheduled_at', now),
+        sb.from('mentorship_containers').select('id', { count: 'exact', head: true }).eq('is_archived', false).eq('status', 'active'),
+        sb.from('services').select('id', { count: 'exact', head: true }).eq('is_archived', false).eq('is_active', true)
+    ]).then(function(results) {
+        document.getElementById('statClients').textContent = results[0].count ?? '—';
+        document.getElementById('statAppts').textContent = results[1].count ?? '—';
+        document.getElementById('statContainers').textContent = results[2].count ?? '—';
+        document.getElementById('statServices').textContent = results[3].count ?? '—';
+    });
+});
+</script>
+</body>
+</html>
