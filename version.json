@@ -1,9 +1,9 @@
 {
-  "version": "v260310.08 1:17pm",
-  "release": 8,
-  "sha": "17578ec",
-  "fullSha": "17578ecef74558dd6c3c24fab251ca0764189d00",
+  "version": "v260310.09 1:21pm",
+  "release": 9,
+  "sha": "480590c",
+  "fullSha": "480590c173ce02cc4c46fff611fd8e83cc4df9b8",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:17:17Z",
-  "commits": [{"sha": "17578ec", "message": "docs: log Google Calendar push channel + renewal instructions", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:21:30Z",
+  "commits": [{"sha": "480590c", "message": "feat: one-time Google Calendar import + Import button in admin", "author": "Adi"}]
 }
