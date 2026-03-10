@@ -1,9 +1,9 @@
 {
-  "version": "v260310.12 1:55pm",
-  "release": 12,
-  "sha": "c57f356",
-  "fullSha": "c57f3564aa67a25a9b386f8dd769a3d0f6f37c3f",
+  "version": "v260310.13 1:58pm",
+  "release": 13,
+  "sha": "2aa59a8",
+  "fullSha": "2aa59a8b9ad1c3d38e65fa8e59b1e95a450e0173",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T18:55:14Z",
-  "commits": [{"sha": "c57f356", "message": "fix: Google OAuth \u2014 correct site_url + whitelist GitHub Pages redirect URLs", "author": "Adi"}]
+  "pushedAt": "2026-03-10T18:58:02Z",
+  "commits": [{"sha": "2aa59a8", "message": "fix: rewrite login page \u2014 visible errors, self-contained, robust OAuth + email", "author": "Adi"}]
 }
