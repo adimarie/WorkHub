@@ -1,9 +1,9 @@
 {
-  "version": "v260310.15 2:22pm",
-  "release": 15,
-  "sha": "ce94c75",
-  "fullSha": "ce94c750fde54f156950167bf148aceae47d496d",
+  "version": "v260310.16 2:48pm",
+  "release": 16,
+  "sha": "2e839b8",
+  "fullSha": "2e839b8f14bebd2674c0367e420453436c0fd2a8",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T19:22:47Z",
-  "commits": [{"sha": "ce94c75", "message": "feat: split hero layout, offerings dropdown nav, image cards", "author": "Adi"}]
+  "pushedAt": "2026-03-10T19:48:54Z",
+  "commits": [{"sha": "2e839b8", "message": "feat: full offering hierarchy \u2014 services overview + 6 individual pages", "author": "Adi"}]
 }
