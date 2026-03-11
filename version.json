@@ -1,9 +1,9 @@
 {
-  "version": "v260311.04 1:02am",
-  "release": 4,
-  "sha": "eda4b60",
-  "fullSha": "eda4b60af95ed01e6771ff437787e8c1cfcf3c3c",
+  "version": "v260311.05 1:09am",
+  "release": 5,
+  "sha": "591c90f",
+  "fullSha": "591c90f8dd77b23c83973ad12f4341bda3994dbf",
   "actor": "adimarie",
-  "pushedAt": "2026-03-11T06:02:38Z",
-  "commits": [{"sha": "eda4b60", "message": "Delete CNAME", "author": "adimarie"}]
+  "pushedAt": "2026-03-11T06:09:09Z",
+  "commits": [{"sha": "591c90f", "message": "fix: robust OAuth callback \u2014 explicit PKCE exchange + visible errors", "author": "Adi"}]
 }
