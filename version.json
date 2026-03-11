@@ -1,9 +1,9 @@
 {
-  "version": "v260311.01 12:23am",
-  "release": 1,
-  "sha": "fd28517",
-  "fullSha": "fd28517fd552f031df26f1eae86dddc7ed7c6f5a",
+  "version": "v260311.02 12:56am",
+  "release": 2,
+  "sha": "abdb0ff",
+  "fullSha": "abdb0ff1a832ba07cd8a1b6b4ea1eb71f91760bf",
   "actor": "adimarie",
-  "pushedAt": "2026-03-11T05:23:15Z",
-  "commits": [{"sha": "fd28517", "message": "Create CNAME", "author": "adimarie"}]
+  "pushedAt": "2026-03-11T05:56:07Z",
+  "commits": [{"sha": "abdb0ff", "message": "feat: admin CRUD pages + CRM pipeline view", "author": "Adi"}]
 }
