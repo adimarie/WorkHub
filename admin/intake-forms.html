@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intake Forms — Admin</title>
+  <link rel="stylesheet" href="../shared/admin.css">
+  <style>
+    :root {
+      --wine: #6b2d3e; --gold: #c9a84c; --cream: #f5f0e8;
+      --sage: #5a6b5d; --surface: #ffffff; --border: #e5e0d8; --text: #2d2520; --muted: #8a8078;
+    }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--cream); color:var(--text); }
+    .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+
+    .sidebar { background:var(--wine); color:#fff; padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar__brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.15); }
+    .sidebar__brand-name { font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; }
+    .sidebar__brand-sub  { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .sidebar__nav { padding:16px 0; }
+    .sidebar__nav a { display:block; padding:10px 20px; color:rgba(255,255,255,.75); text-decoration:none; font-size:13px; font-weight:500; transition:all .15s; }
+    .sidebar__nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar__nav a.active { background:rgba(255,255,255,.15); color:#fff; border-left:3px solid var(--gold); padding-left:17px; }
+    .sidebar__user { padding:16px 20px; border-top:1px solid rgba(255,255,255,.15); }
+    .sidebar__user-name { font-size:12px; font-weight:600; color:#fff; }
+    .sidebar__user-email { font-size:11px; color:rgba(255,255,255,.5); }
+    .sidebar__signout { display:block; margin-top:10px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; text-decoration:underline; }
+
+    .main { padding:32px; overflow-y:auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header h1 { font-size:24px; font-weight:700; margin:0; }
+
+    .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+    .search-input { flex:1; min-width:200px; padding:9px 14px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:#fff; color:var(--text); outline:none; transition:.15s; }
+    .search-input:focus { border-color:var(--wine); }
+    .filter-select { padding:9px 12px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:#fff; cursor:pointer; }
+
+    .form-list { display:flex; flex-direction:column; gap:10px; }
+    .form-row {
+      background:#fff; border:1px solid var(--border); border-radius:10px;
+      padding:16px 20px; display:flex; align-items:center; gap:16px;
+      cursor:pointer; transition:.15s;
+    }
+    .form-row:hover { border-color:var(--wine); }
+    .form-row__icon { width:36px; height:36px; border-radius:8px; background:rgba(107,45,62,.08); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .form-row__info { flex:1; }
+    .form-row__client { font-size:14px; font-weight:600; margin-bottom:3px; }
+    .form-row__meta { font-size:12px; color:var(--muted); }
+    .form-type-badge { display:inline-block; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:600; background:rgba(107,45,62,.08); color:var(--wine); }
+
+    /* Detail panel */
+    .detail-panel {
+      position:fixed; top:0; right:0; bottom:0; width:480px; background:#fff;
+      border-left:1px solid var(--border); z-index:200; overflow-y:auto;
+      transform:translateX(100%); transition:.25s; box-shadow:-4px 0 24px rgba(0,0,0,.1);
+    }
+    .detail-panel.open { transform:translateX(0); }
+    .detail-panel__header { padding:24px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .detail-panel__header h2 { font-size:16px; font-weight:700; margin:0 0 4px; }
+    .detail-panel__header p { font-size:13px; color:var(--muted); margin:0; }
+    .detail-panel__body { padding:24px; }
+    .response-item { margin-bottom:20px; }
+    .response-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:6px; }
+    .response-value { font-size:14px; line-height:1.6; color:var(--text); background:#fdf9f3; border-radius:8px; padding:10px 14px; white-space:pre-wrap; }
+    .modal-close { border:none; background:none; font-size:20px; cursor:pointer; color:var(--muted); padding:4px; flex-shrink:0; }
+
+    .new-form-btn { padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.15s; background:var(--wine); color:#fff; }
+    .new-form-btn:hover { opacity:.9; }
+
+    /* Create form modal */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      opacity:0; pointer-events:none; transition:.2s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal {
+      background:#fff; border-radius:16px; width:100%; max-width:600px;
+      max-height:92vh; overflow-y:auto; padding:28px;
+      transform:translateY(12px); transition:.2s;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .modal-header h2 { font-size:18px; font-weight:700; margin:0; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:7px;
+      font-size:14px; color:var(--text); background:#fff; box-sizing:border-box; transition:.15s; font-family:inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline:none; border-color:var(--wine); box-shadow:0 0 0 3px rgba(107,45,62,.08);
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .modal-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
+    .btn { padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.15s; }
+    .btn-primary { background:var(--wine); color:#fff; }
+    .btn-primary:hover { opacity:.9; }
+    .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-ghost:hover { background:var(--cream); }
+
+    .toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:#1a1a1a; color:#fff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; transform:translateY(80px); opacity:0; transition:.3s; max-width:320px; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:var(--sage); }
+    .toast.error   { background:#dc2626; }
+    .empty { text-align:center; padding:60px 20px; color:var(--muted); font-size:14px; }
+
+    @media(max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:16px; }
+      .detail-panel { width:100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-name">Animist Apothecary</div>
+      <div class="sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="index.html">Dashboard</a>
+      <a href="clients.html">Clients</a>
+      <a href="appointments.html">Appointments</a>
+      <a href="services.html">Services</a>
+      <a href="mentorship.html">Mentorship</a>
+      <a href="payments.html">Payments</a>
+      <a href="intake-forms.html" class="active">Intake Forms</a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="sidebar__user-name" id="userName">—</div>
+      <div class="sidebar__user-email" id="userEmail">—</div>
+      <a class="sidebar__signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>Intake Forms</h1>
+      <button class="new-form-btn" onclick="openCreateModal()">+ Add Form Entry</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by client name…" oninput="filterForms()">
+      <select class="filter-select" id="typeFilter" onchange="filterForms()">
+        <option value="">All types</option>
+        <option value="initial">Initial Intake</option>
+        <option value="somatic">Somatic</option>
+        <option value="ceremonial">Ceremonial</option>
+        <option value="mentorship">Mentorship</option>
+      </select>
+    </div>
+
+    <div class="form-list" id="formList"></div>
+  </main>
+</div>
+
+<!-- Detail Panel -->
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-panel__header">
+    <div>
+      <h2 id="detailClient">—</h2>
+      <p id="detailMeta">—</p>
+    </div>
+    <button class="modal-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="detail-panel__body" id="detailBody"></div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add Form Entry</h2>
+      <button class="modal-close" onclick="closeCreateModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label>Client *</label>
+      <select id="fClient"><option value="">Select client…</option></select>
+    </div>
+    <div class="form-group">
+      <label>Form Type</label>
+      <select id="fType">
+        <option value="initial">Initial Intake</option>
+        <option value="somatic">Somatic</option>
+        <option value="ceremonial">Ceremonial</option>
+        <option value="mentorship">Mentorship</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Presenting Intentions</label>
+      <textarea id="fIntentions" placeholder="What brought them here, what they're seeking…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Relevant History</label>
+      <textarea id="fHistory" placeholder="Medical, emotional, spiritual background relevant to the work…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Contraindications / Considerations</label>
+      <textarea id="fContra" placeholder="Physical limitations, trauma history, medications…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Agreements & Consent Notes</label>
+      <textarea id="fConsent" placeholder="Consent confirmed, agreements discussed…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Additional Notes</label>
+      <textarea id="fNotes" placeholder="Anything else relevant…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCreateModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveForm()" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+let allForms = [];
+let clients = [];
+
+const TYPE_LABELS = { initial:'Initial Intake', somatic:'Somatic', ceremonial:'Ceremonial', mentorship:'Mentorship' };
+const TYPE_ICONS  = { initial:'📋', somatic:'🌿', ceremonial:'🔮', mentorship:'✦' };
+
+requireAuth(async function(user, sb) {
+  document.getElementById('userName').textContent = user.user_metadata?.full_name || user.email.split('@')[0];
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut(); window.location.href = '../login.html';
+  });
+  await Promise.all([loadClients(), loadForms()]);
+});
+
+async function loadClients() {
+  const { data } = await window.adminSupabase.from('clients').select('id, full_name').eq('is_archived', false).order('full_name');
+  clients = data || [];
+  const sel = document.getElementById('fClient');
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.forEach(c => sel.innerHTML += `<option value="${c.id}">${esc(c.full_name)}</option>`);
+}
+
+async function loadForms() {
+  const { data, error } = await window.adminSupabase
+    .from('intake_forms')
+    .select('*, clients(id, full_name)')
+    .eq('is_archived', false)
+    .order('submitted_at', { ascending: false });
+  if (error) { showToast('Failed to load forms', 'error'); return; }
+  allForms = data || [];
+  filterForms();
+}
+
+function filterForms() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const type = document.getElementById('typeFilter').value;
+  const filtered = allForms.filter(f => {
+    const matchQ = !q || f.clients?.full_name?.toLowerCase().includes(q);
+    const matchT = !type || f.form_type === type;
+    return matchQ && matchT;
+  });
+  renderForms(filtered);
+}
+
+function renderForms(list) {
+  const container = document.getElementById('formList');
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">No intake forms found.</div>';
+    return;
+  }
+  container.innerHTML = list.map(f => {
+    const date = f.submitted_at
+      ? new Date(f.submitted_at).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})
+      : new Date(f.created_at).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+    const icon = TYPE_ICONS[f.form_type] || '📋';
+    const label = TYPE_LABELS[f.form_type] || f.form_type;
+    return `<div class="form-row" onclick="openDetail('${f.id}')">
+      <div class="form-row__icon">${icon}</div>
+      <div class="form-row__info">
+        <div class="form-row__client">${esc(f.clients?.full_name || '—')}</div>
+        <div class="form-row__meta">${date}</div>
+      </div>
+      <span class="form-type-badge">${label}</span>
+    </div>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  const f = allForms.find(x => x.id === id);
+  if (!f) return;
+  const responses = f.responses || {};
+  const date = f.submitted_at
+    ? new Date(f.submitted_at).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'})
+    : new Date(f.created_at).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+
+  document.getElementById('detailClient').textContent = f.clients?.full_name || '—';
+  document.getElementById('detailMeta').textContent = (TYPE_LABELS[f.form_type] || f.form_type) + ' · ' + date;
+
+  const fields = [
+    ['Presenting Intentions', responses.intentions],
+    ['Relevant History', responses.history],
+    ['Contraindications / Considerations', responses.contraindications],
+    ['Agreements & Consent', responses.consent],
+    ['Additional Notes', responses.notes],
+  ].filter(([, v]) => v);
+
+  document.getElementById('detailBody').innerHTML = fields.length
+    ? fields.map(([label, val]) => `
+        <div class="response-item">
+          <div class="response-label">${esc(label)}</div>
+          <div class="response-value">${esc(val)}</div>
+        </div>`).join('')
+    : '<p style="color:var(--muted);font-size:14px">No responses recorded.</p>';
+
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+function openCreateModal() {
+  ['fIntentions','fHistory','fContra','fConsent','fNotes'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('fClient').value = '';
+  document.getElementById('fType').value = 'initial';
+  document.getElementById('createModal').classList.add('open');
+}
+
+function closeCreateModal() {
+  document.getElementById('createModal').classList.remove('open');
+}
+
+async function saveForm() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  const clientId = document.getElementById('fClient').value;
+  if (!clientId) { showToast('Please select a client', 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+
+  const responses = {
+    intentions: document.getElementById('fIntentions').value.trim() || null,
+    history: document.getElementById('fHistory').value.trim() || null,
+    contraindications: document.getElementById('fContra').value.trim() || null,
+    consent: document.getElementById('fConsent').value.trim() || null,
+    notes: document.getElementById('fNotes').value.trim() || null,
+  };
+  // Remove nulls
+  Object.keys(responses).forEach(k => { if (!responses[k]) delete responses[k]; });
+
+  const payload = {
+    client_id: clientId,
+    form_type: document.getElementById('fType').value,
+    responses,
+    submitted_at: new Date().toISOString(),
+  };
+
+  const { error } = await window.adminSupabase.from('intake_forms').insert(payload);
+  if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+  showToast('Form saved', 'success');
+  closeCreateModal();
+  await loadForms();
+  btn.textContent = 'Save'; btn.disabled = false;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast show${type ? ' '+type : ''}`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+document.getElementById('createModal').addEventListener('click', function(e) {
+  if (e.target === this) closeCreateModal();
+});
+</script>
+</body>
+</html>

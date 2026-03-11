@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — Admin</title>
+  <link rel="stylesheet" href="../shared/admin.css">
+  <style>
+    :root {
+      --wine: #6b2d3e; --gold: #c9a84c; --cream: #f5f0e8;
+      --sage: #5a6b5d; --surface: #ffffff; --border: #e5e0d8; --text: #2d2520; --muted: #8a8078;
+    }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--cream); color:var(--text); }
+    .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+
+    .sidebar { background:var(--wine); color:#fff; padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar__brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.15); }
+    .sidebar__brand-name { font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; }
+    .sidebar__brand-sub  { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .sidebar__nav { padding:16px 0; }
+    .sidebar__nav a { display:block; padding:10px 20px; color:rgba(255,255,255,.75); text-decoration:none; font-size:13px; font-weight:500; transition:all .15s; }
+    .sidebar__nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar__nav a.active { background:rgba(255,255,255,.15); color:#fff; border-left:3px solid var(--gold); padding-left:17px; }
+    .sidebar__user { padding:16px 20px; border-top:1px solid rgba(255,255,255,.15); }
+    .sidebar__user-name { font-size:12px; font-weight:600; color:#fff; }
+    .sidebar__user-email { font-size:11px; color:rgba(255,255,255,.5); }
+    .sidebar__signout { display:block; margin-top:10px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; text-decoration:underline; }
+
+    .main { padding:32px; overflow-y:auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .page-header h1 { font-size:24px; font-weight:700; margin:0; }
+
+    .btn { padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.15s; }
+    .btn-primary { background:var(--wine); color:#fff; }
+    .btn-primary:hover { opacity:.9; }
+    .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-ghost:hover { background:var(--cream); }
+    .btn-danger { background:#dc2626; color:#fff; }
+    .btn-sm { padding:5px 12px; font-size:12px; }
+
+    .category-section { margin-bottom:32px; }
+    .category-section h2 { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 14px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+
+    .service-list { display:flex; flex-direction:column; gap:10px; }
+    .service-row {
+      background:#fff; border:1px solid var(--border); border-radius:10px;
+      padding:16px 20px; display:flex; align-items:center; gap:16px;
+      cursor:pointer; transition:.15s;
+    }
+    .service-row:hover { border-color:var(--wine); }
+    .service-row__info { flex:1; }
+    .service-row__name { font-size:15px; font-weight:600; margin-bottom:3px; }
+    .service-row__desc { font-size:13px; color:var(--muted); line-height:1.4; }
+    .service-row__meta { display:flex; gap:12px; align-items:center; flex-shrink:0; }
+    .service-row__price { font-size:14px; font-weight:700; color:var(--wine); }
+    .service-row__duration { font-size:12px; color:var(--muted); }
+    .status-badge {
+      display:inline-block; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:600;
+    }
+    .status-active { background:#dcfce7; color:#15803d; }
+    .status-inactive { background:#f1f5f9; color:#64748b; }
+
+    /* Modal */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      opacity:0; pointer-events:none; transition:.2s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal {
+      background:#fff; border-radius:16px; width:100%; max-width:560px;
+      max-height:90vh; overflow-y:auto; padding:28px;
+      transform:translateY(12px); transition:.2s;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .modal-header h2 { font-size:18px; font-weight:700; margin:0; }
+    .modal-close { border:none; background:none; font-size:20px; cursor:pointer; color:var(--muted); padding:4px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:7px;
+      font-size:14px; color:var(--text); background:#fff; box-sizing:border-box; transition:.15s; font-family:inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline:none; border-color:var(--wine); box-shadow:0 0 0 3px rgba(107,45,62,.08);
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .modal-footer { display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
+
+    .price-hint { font-size:11px; color:var(--muted); margin-top:4px; }
+
+    .toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:#1a1a1a; color:#fff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; transform:translateY(80px); opacity:0; transition:.3s; max-width:320px; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:var(--sage); }
+    .toast.error   { background:#dc2626; }
+    .empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+
+    @media(max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:16px; }
+      .form-row { grid-template-columns:1fr; }
+      .service-row__meta { flex-direction:column; align-items:flex-end; gap:4px; }
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-name">Animist Apothecary</div>
+      <div class="sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="index.html">Dashboard</a>
+      <a href="clients.html">Clients</a>
+      <a href="appointments.html">Appointments</a>
+      <a href="services.html" class="active">Services</a>
+      <a href="mentorship.html">Mentorship</a>
+      <a href="payments.html">Payments</a>
+      <a href="intake-forms.html">Intake Forms</a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="sidebar__user-name" id="userName">—</div>
+      <div class="sidebar__user-email" id="userEmail">—</div>
+      <a class="sidebar__signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>Services & Offerings</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ New Offering</button>
+    </div>
+    <div id="servicesContainer"></div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">New Offering</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label>Name *</label>
+      <input type="text" id="fName" placeholder="Shamanic Bodywork Session">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="fCategory">
+          <option value="somatic">Somatic</option>
+          <option value="ceremonial">Ceremonial</option>
+          <option value="mentorship">Mentorship</option>
+          <option value="divination">Divination</option>
+          <option value="offering">Offering</option>
+          <option value="breathwork">Breathwork</option>
+          <option value="guidance">Guidance</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fActive">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Duration (minutes)</label>
+        <input type="number" id="fDuration" value="90" min="15" step="15">
+      </div>
+      <div class="form-group">
+        <label>Price</label>
+        <input type="number" id="fPrice" placeholder="175" min="0" step="5">
+        <div class="price-hint">Leave blank for sliding scale / by donation</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="fDesc" placeholder="Brief description for admin reference…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <button class="btn btn-danger btn-sm" id="deleteBtn" onclick="deleteService()" style="display:none">Archive</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveService()" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+let allServices = [];
+let editingId = null;
+
+const CATEGORIES = ['somatic','ceremonial','mentorship','divination','offering','breathwork','guidance'];
+const CAT_LABELS = {
+  somatic:'Somatic', ceremonial:'Ceremonial', mentorship:'Mentorship',
+  divination:'Divination', offering:'Offering', breathwork:'Breathwork', guidance:'Guidance'
+};
+
+requireAuth(async function(user, sb) {
+  document.getElementById('userName').textContent = user.user_metadata?.full_name || user.email.split('@')[0];
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut(); window.location.href = '../login.html';
+  });
+  await loadServices();
+});
+
+async function loadServices() {
+  const { data, error } = await window.adminSupabase
+    .from('services').select('*').eq('is_archived', false).order('name');
+  if (error) { showToast('Failed to load services', 'error'); return; }
+  allServices = data || [];
+  renderServices();
+}
+
+function renderServices() {
+  const container = document.getElementById('servicesContainer');
+  if (!allServices.length) {
+    container.innerHTML = '<div class="empty">No offerings yet. Add your first service above.</div>';
+    return;
+  }
+
+  const grouped = {};
+  allServices.forEach(s => {
+    const cat = s.category || 'offering';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(s);
+  });
+
+  let html = '';
+  CATEGORIES.forEach(cat => {
+    const list = grouped[cat];
+    if (!list || !list.length) return;
+    html += `<div class="category-section">
+      <h2>${CAT_LABELS[cat] || cat}</h2>
+      <div class="service-list">
+        ${list.map(s => {
+          const price = s.price_cents != null ? '$' + (s.price_cents / 100).toFixed(0) : 'Sliding scale';
+          const dur = s.duration_minutes ? s.duration_minutes + ' min' : '';
+          return `<div class="service-row" onclick="openModal('${s.id}')">
+            <div class="service-row__info">
+              <div class="service-row__name">${esc(s.name)}</div>
+              ${s.description ? `<div class="service-row__desc">${esc(s.description)}</div>` : ''}
+            </div>
+            <div class="service-row__meta">
+              <span class="service-row__price">${price}</span>
+              ${dur ? `<span class="service-row__duration">${dur}</span>` : ''}
+              <span class="status-badge ${s.is_active ? 'status-active' : 'status-inactive'}">${s.is_active ? 'Active' : 'Inactive'}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  // Uncategorized
+  const uncatList = allServices.filter(s => !CATEGORIES.includes(s.category));
+  if (uncatList.length) {
+    html += `<div class="category-section"><h2>Other</h2><div class="service-list">${uncatList.map(s => {
+      const price = s.price_cents != null ? '$' + (s.price_cents / 100).toFixed(0) : 'Sliding scale';
+      return `<div class="service-row" onclick="openModal('${s.id}')">
+        <div class="service-row__info"><div class="service-row__name">${esc(s.name)}</div>${s.description ? `<div class="service-row__desc">${esc(s.description)}</div>` : ''}</div>
+        <div class="service-row__meta"><span class="service-row__price">${price}</span></div>
+      </div>`;
+    }).join('')}</div></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function openModal(id) {
+  editingId = id || null;
+  document.getElementById('modalTitle').textContent = id ? 'Edit Offering' : 'New Offering';
+  document.getElementById('deleteBtn').style.display = id ? '' : 'none';
+
+  if (id) {
+    const s = allServices.find(x => x.id === id);
+    if (s) {
+      document.getElementById('fName').value = s.name || '';
+      document.getElementById('fCategory').value = s.category || 'offering';
+      document.getElementById('fActive').value = s.is_active ? 'true' : 'false';
+      document.getElementById('fDuration').value = s.duration_minutes || 90;
+      document.getElementById('fPrice').value = s.price_cents != null ? (s.price_cents / 100) : '';
+      document.getElementById('fDesc').value = s.description || '';
+    }
+  } else {
+    document.getElementById('fName').value = '';
+    document.getElementById('fCategory').value = 'somatic';
+    document.getElementById('fActive').value = 'true';
+    document.getElementById('fDuration').value = 90;
+    document.getElementById('fPrice').value = '';
+    document.getElementById('fDesc').value = '';
+  }
+  document.getElementById('serviceModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('serviceModal').classList.remove('open');
+}
+
+async function saveService() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  const name = document.getElementById('fName').value.trim();
+  if (!name) { showToast('Name is required', 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+
+  const priceVal = document.getElementById('fPrice').value;
+  const priceCents = priceVal !== '' ? Math.round(parseFloat(priceVal) * 100) : null;
+
+  const payload = {
+    name,
+    category: document.getElementById('fCategory').value,
+    is_active: document.getElementById('fActive').value === 'true',
+    duration_minutes: parseInt(document.getElementById('fDuration').value) || null,
+    price_cents: priceCents,
+    description: document.getElementById('fDesc').value.trim() || null,
+  };
+
+  if (editingId) {
+    const { error } = await window.adminSupabase.from('services').update(payload).eq('id', editingId);
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+    showToast('Offering updated', 'success');
+  } else {
+    const { error } = await window.adminSupabase.from('services').insert(payload);
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+    showToast('Offering created', 'success');
+  }
+  closeModal();
+  await loadServices();
+  btn.textContent = 'Save'; btn.disabled = false;
+}
+
+async function deleteService() {
+  if (!editingId) return;
+  if (!confirm('Archive this offering?')) return;
+  const { error } = await window.adminSupabase.from('services').update({ is_archived: true }).eq('id', editingId);
+  if (error) { showToast('Archive failed', 'error'); return; }
+  closeModal();
+  await loadServices();
+  showToast('Offering archived');
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast show${type ? ' '+type : ''}`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+document.getElementById('serviceModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

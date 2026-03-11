@@ -1382,11 +1382,173 @@ function AutomationView() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PIPELINE / CLIENT FLOW VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+const PIPELINE_STAGES = [
+  {id:"inquiry",      label:"Inquiry",          icon:"◌", color:C.brownLt,  desc:"Initial contact, pre-intake"},
+  {id:"intake",       label:"Intake",           icon:"📋", color:C.ochre,   desc:"Intake received, preparing for first session"},
+  {id:"first",        label:"First Session",    icon:"🌱", color:C.sage,    desc:"First session scheduled or completed"},
+  {id:"active",       label:"Active",           icon:"◯", color:C.terra,   desc:"Regular 1:1 sessions ongoing"},
+  {id:"arc",          label:"Mentorship Arc",   icon:"🔮", color:C.rose,    desc:"In a long-arc mentorship container"},
+  {id:"integration",  label:"Integration",      icon:"🌙", color:C.brownMd, desc:"Between sessions, integrating"},
+  {id:"alumni",       label:"Alumni",           icon:"✦", color:C.moss,    desc:"Completed work, community holder"},
+];
+
+function PipelineView({clients, onNav, onClientsChange}) {
+  const [dragging, setDragging] = useState(null);
+  const [hovering, setHovering] = useState(null);
+
+  // Each client has a `pipelineStage` field; default based on existing data
+  function getStage(c) {
+    if (c.pipelineStage) return c.pipelineStage;
+    if (c.type === "arc") return "arc";
+    if (c.sessions && c.sessions.length > 2) return "active";
+    if (c.sessions && c.sessions.length === 1) return "first";
+    if (c.email || c.phone) return "intake";
+    return "inquiry";
+  }
+
+  function setStage(clientId, stageId) {
+    const updated = clients.map(c => c.id === clientId ? {...c, pipelineStage: stageId} : c);
+    onClientsChange(updated);
+  }
+
+  const byStage = {};
+  PIPELINE_STAGES.forEach(s => { byStage[s.id] = []; });
+  clients.forEach(c => {
+    const stage = getStage(c);
+    if (byStage[stage]) byStage[stage].push(c);
+    else byStage["inquiry"].push(c);
+  });
+
+  function onDragStart(clientId) { setDragging(clientId); }
+  function onDragOver(e, stageId) { e.preventDefault(); setHovering(stageId); }
+  function onDrop(e, stageId) { e.preventDefault(); if (dragging) setStage(dragging, stageId); setDragging(null); setHovering(null); }
+  function onDragEnd() { setDragging(null); setHovering(null); }
+
+  const colWidth = 210;
+
+  return (
+    <div className="fade-up">
+      <div style={{fontFamily:"'Playfair Display',serif",fontSize:22,fontStyle:"italic",color:C.brown,marginBottom:6}}>
+        Client Flow Pipeline
+      </div>
+      <div style={{fontFamily:"'EB Garamond',serif",fontSize:14,color:C.brownMd,marginBottom:20,lineHeight:1.6}}>
+        Drag clients between stages to track their journey through your practice.
+      </div>
+
+      <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:20,alignItems:"flex-start"}}>
+        {PIPELINE_STAGES.map(stage => {
+          const stageClients = byStage[stage.id] || [];
+          const isHovering = hovering === stage.id;
+          return (
+            <div key={stage.id}
+              style={{
+                minWidth:colWidth, width:colWidth, flexShrink:0,
+                background:isHovering ? stage.color + "18" : C.parchMd,
+                borderRadius:10, border:`2px solid ${isHovering ? stage.color : C.sandLt}`,
+                transition:"all 0.15s",
+              }}
+              onDragOver={e => onDragOver(e, stage.id)}
+              onDrop={e => onDrop(e, stage.id)}
+            >
+              {/* Column header */}
+              <div style={{padding:"12px 14px 8px",borderBottom:`1px solid ${stage.color}33`}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:7}}>
+                    <span style={{fontSize:14}}>{stage.icon}</span>
+                    <span style={{fontFamily:"'Courier Prime',monospace",fontSize:11,fontWeight:700,
+                      color:stage.color,letterSpacing:"0.05em"}}>{stage.label.toUpperCase()}</span>
+                  </div>
+                  <span style={{fontFamily:"'Courier Prime',monospace",fontSize:10,color:C.brownMd,
+                    background:C.white,borderRadius:12,padding:"1px 7px",border:`1px solid ${C.sandLt}`}}>
+                    {stageClients.length}
+                  </span>
+                </div>
+                <div style={{fontFamily:"'EB Garamond',serif",fontSize:12,color:C.brownMd,
+                  fontStyle:"italic",marginTop:4,lineHeight:1.4}}>{stage.desc}</div>
+              </div>
+
+              {/* Cards */}
+              <div style={{padding:"8px 8px 12px",display:"flex",flexDirection:"column",gap:6,minHeight:100}}>
+                {stageClients.map(c => {
+                  const name = [c.firstName, c.lastName].filter(Boolean).join(" ") || "(unnamed)";
+                  const lastSession = c.sessions?.length
+                    ? c.sessions.sort((a,b) => b.date.localeCompare(a.date))[0]
+                    : null;
+                  return (
+                    <div key={c.id}
+                      draggable
+                      onDragStart={() => onDragStart(c.id)}
+                      onDragEnd={onDragEnd}
+                      onClick={() => onNav(c.id)}
+                      style={{
+                        background:C.white, borderRadius:7,
+                        border:`1px solid ${C.sandLt}`,
+                        borderLeft:`3px solid ${stage.color}`,
+                        padding:"10px 12px", cursor:"grab",
+                        boxShadow:"0 1px 4px rgba(0,0,0,0.05)",
+                        transition:"box-shadow 0.15s",
+                        opacity: dragging === c.id ? 0.5 : 1,
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.boxShadow="0 3px 10px rgba(0,0,0,0.10)"}
+                      onMouseLeave={e => e.currentTarget.style.boxShadow="0 1px 4px rgba(0,0,0,0.05)"}
+                    >
+                      <div style={{fontFamily:"'EB Garamond',serif",fontSize:14,color:C.brown,fontWeight:"500",marginBottom:4}}>
+                        {name}
+                      </div>
+                      {c.type && <Pill label={c.type} color={stage.color} />}
+                      {lastSession && (
+                        <div style={{fontFamily:"'Courier Prime',monospace",fontSize:9,
+                          color:C.brownMd,marginTop:6,letterSpacing:"0.04em"}}>
+                          Last: {lastSession.date}
+                        </div>
+                      )}
+                      {c.sessions?.length > 0 && (
+                        <div style={{fontFamily:"'Courier Prime',monospace",fontSize:9,
+                          color:C.brownMd,letterSpacing:"0.04em"}}>
+                          {c.sessions.length} session{c.sessions.length !== 1 ? "s" : ""}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                {stageClients.length === 0 && (
+                  <div style={{fontFamily:"'EB Garamond',serif",fontSize:12,color:C.brownMd,
+                    fontStyle:"italic",textAlign:"center",padding:"20px 0",opacity:0.6}}>
+                    Drop clients here
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Stage summary strip */}
+      <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:8}}>
+        {PIPELINE_STAGES.map(s => byStage[s.id]?.length > 0 && (
+          <div key={s.id} style={{display:"flex",alignItems:"center",gap:5,
+            background:s.color+"15",border:`1px solid ${s.color}44`,borderRadius:20,
+            padding:"4px 12px"}}>
+            <span style={{fontFamily:"'Courier Prime',monospace",fontSize:10,color:s.color}}>{s.label}</span>
+            <span style={{fontFamily:"'Courier Prime',monospace",fontSize:10,color:s.color,fontWeight:700}}>
+              {byStage[s.id].length}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // MAIN WORKHUB
 // ─────────────────────────────────────────────────────────────────────────────
 const NAV = [
   {id:"overview",   icon:"✦", label:"Overview"},
   {id:"clients",    icon:"◯", label:"Clients"},
+  {id:"pipeline",   icon:"⟶", label:"Pipeline"},
   {id:"groups",     icon:"⬡", label:"Groups"},
   {id:"circuit",    icon:"⟳", label:"Circuit"},
   {id:"ecosystem",  icon:"◉", label:"Ecosystem"},
@@ -1478,6 +1640,13 @@ function WorkHub() {
             onClientsChange={handleClientsChange}
             deepLinkId={clientDeepLink}
             onDeepLinkClear={()=>setClientDeepLink(null)}
+          />
+        )}
+        {view==="pipeline"   && (
+          <PipelineView
+            clients={clients}
+            onNav={navToClient}
+            onClientsChange={handleClientsChange}
           />
         )}
         {view==="groups"     && <GroupsView groups={groups} setGroups={setGroups} />}

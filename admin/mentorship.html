@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentorship — Admin</title>
+  <link rel="stylesheet" href="../shared/admin.css">
+  <style>
+    :root {
+      --wine: #6b2d3e; --gold: #c9a84c; --cream: #f5f0e8;
+      --sage: #5a6b5d; --surface: #ffffff; --border: #e5e0d8; --text: #2d2520; --muted: #8a8078;
+    }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--cream); color:var(--text); }
+    .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+
+    .sidebar { background:var(--wine); color:#fff; padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar__brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.15); }
+    .sidebar__brand-name { font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; }
+    .sidebar__brand-sub  { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .sidebar__nav { padding:16px 0; }
+    .sidebar__nav a { display:block; padding:10px 20px; color:rgba(255,255,255,.75); text-decoration:none; font-size:13px; font-weight:500; transition:all .15s; }
+    .sidebar__nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar__nav a.active { background:rgba(255,255,255,.15); color:#fff; border-left:3px solid var(--gold); padding-left:17px; }
+    .sidebar__user { padding:16px 20px; border-top:1px solid rgba(255,255,255,.15); }
+    .sidebar__user-name { font-size:12px; font-weight:600; color:#fff; }
+    .sidebar__user-email { font-size:11px; color:rgba(255,255,255,.5); }
+    .sidebar__signout { display:block; margin-top:10px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; text-decoration:underline; }
+
+    .main { padding:32px; overflow-y:auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header h1 { font-size:24px; font-weight:700; margin:0; }
+
+    .status-tabs { display:flex; gap:4px; margin-bottom:24px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:4px; width:fit-content; }
+    .status-tab { padding:7px 16px; border:none; background:none; border-radius:7px; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; transition:.15s; }
+    .status-tab.active { background:var(--wine); color:#fff; }
+
+    .btn { padding:9px 18px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:.15s; }
+    .btn-primary { background:var(--wine); color:#fff; }
+    .btn-primary:hover { opacity:.9; }
+    .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-ghost:hover { background:var(--cream); }
+    .btn-danger { background:#dc2626; color:#fff; }
+    .btn-sm { padding:5px 12px; font-size:12px; }
+
+    .container-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:14px; }
+    .container-card {
+      background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px;
+      cursor:pointer; transition:.15s;
+    }
+    .container-card:hover { border-color:var(--wine); box-shadow:0 4px 16px rgba(107,45,62,.08); }
+    .container-card__header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; }
+    .container-card__title { font-size:15px; font-weight:700; margin-bottom:3px; }
+    .container-card__client { font-size:13px; color:var(--muted); }
+    .status-badge { display:inline-block; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:600; }
+    .status-active { background:#dcfce7; color:#15803d; }
+    .status-paused { background:#fef9c3; color:#854d0e; }
+    .status-completed { background:#e0f2fe; color:#0369a1; }
+    .status-cancelled { background:#fee2e2; color:#b91c1c; }
+
+    .progress-bar { background:#f1ece3; border-radius:4px; height:8px; margin:12px 0 6px; overflow:hidden; }
+    .progress-bar__fill { height:100%; background:var(--sage); border-radius:4px; transition:.3s; }
+    .progress-label { font-size:12px; color:var(--muted); display:flex; justify-content:space-between; }
+
+    .container-card__dates { font-size:12px; color:var(--muted); margin-top:10px; }
+
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      opacity:0; pointer-events:none; transition:.2s;
+    }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal {
+      background:#fff; border-radius:16px; width:100%; max-width:560px;
+      max-height:90vh; overflow-y:auto; padding:28px;
+      transform:translateY(12px); transition:.2s;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+    }
+    .modal-overlay.open .modal { transform:translateY(0); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .modal-header h2 { font-size:18px; font-weight:700; margin:0; }
+    .modal-close { border:none; background:none; font-size:20px; cursor:pointer; color:var(--muted); padding:4px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:7px;
+      font-size:14px; color:var(--text); background:#fff; box-sizing:border-box; transition:.15s; font-family:inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline:none; border-color:var(--wine); box-shadow:0 0 0 3px rgba(107,45,62,.08);
+    }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .modal-footer { display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--border); }
+
+    .session-counter { display:flex; align-items:center; gap:12px; margin-top:8px; }
+    .session-counter button { width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .session-counter button:hover { border-color:var(--wine); }
+    .session-counter span { font-size:16px; font-weight:700; min-width:24px; text-align:center; }
+
+    .toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:#1a1a1a; color:#fff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; transform:translateY(80px); opacity:0; transition:.3s; max-width:320px; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:var(--sage); }
+    .toast.error   { background:#dc2626; }
+    .empty { text-align:center; padding:60px 20px; color:var(--muted); font-size:14px; }
+
+    @media(max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:16px; }
+      .form-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-name">Animist Apothecary</div>
+      <div class="sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="index.html">Dashboard</a>
+      <a href="clients.html">Clients</a>
+      <a href="appointments.html">Appointments</a>
+      <a href="services.html">Services</a>
+      <a href="mentorship.html" class="active">Mentorship</a>
+      <a href="payments.html">Payments</a>
+      <a href="intake-forms.html">Intake Forms</a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="sidebar__user-name" id="userName">—</div>
+      <div class="sidebar__user-email" id="userEmail">—</div>
+      <a class="sidebar__signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>Mentorship Containers</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ New Container</button>
+    </div>
+
+    <div class="status-tabs">
+      <button class="status-tab active" onclick="setFilter('active')">Active</button>
+      <button class="status-tab" onclick="setFilter('paused')">Paused</button>
+      <button class="status-tab" onclick="setFilter('completed')">Completed</button>
+      <button class="status-tab" onclick="setFilter('all')">All</button>
+    </div>
+
+    <div class="container-grid" id="containerGrid"></div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="containerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">New Container</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label>Container Name *</label>
+      <input type="text" id="fName" placeholder="6-Month Mentorship — Spring 2026">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client *</label>
+        <select id="fClient"><option value="">Select client…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Service</label>
+        <select id="fService"><option value="">Select service…</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fStatus">
+          <option value="active">Active</option>
+          <option value="paused">Paused</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Total Sessions</label>
+        <input type="number" id="fTotal" value="6" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Sessions Used</label>
+      <div class="session-counter">
+        <button type="button" onclick="adjustSessions(-1)">−</button>
+        <span id="sessionsUsed">0</span>
+        <button type="button" onclick="adjustSessions(1)">+</button>
+        <span style="font-size:13px;color:var(--muted)">of <span id="totalDisplay">6</span></span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" id="fStart">
+      </div>
+      <div class="form-group">
+        <label>End Date</label>
+        <input type="date" id="fEnd">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="fDesc" placeholder="Container intentions, focus areas, agreements…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="fNotes" placeholder="Session summaries, themes, next steps…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <button class="btn btn-danger btn-sm" id="deleteBtn" onclick="deleteContainer()" style="display:none">Archive</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveContainer()" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+let allContainers = [];
+let clients = [];
+let services = [];
+let editingId = null;
+let currentFilter = 'active';
+let sessionsUsedVal = 0;
+
+requireAuth(async function(user, sb) {
+  document.getElementById('userName').textContent = user.user_metadata?.full_name || user.email.split('@')[0];
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut(); window.location.href = '../login.html';
+  });
+  await Promise.all([loadClients(), loadServices()]);
+  await loadContainers();
+});
+
+async function loadClients() {
+  const { data } = await window.adminSupabase.from('clients').select('id, full_name').eq('is_archived', false).order('full_name');
+  clients = data || [];
+  const sel = document.getElementById('fClient');
+  sel.innerHTML = '<option value="">Select client…</option>';
+  clients.forEach(c => sel.innerHTML += `<option value="${c.id}">${esc(c.full_name)}</option>`);
+}
+
+async function loadServices() {
+  const { data } = await window.adminSupabase.from('services').select('id, name').eq('is_archived', false).eq('is_active', true).order('name');
+  services = data || [];
+  const sel = document.getElementById('fService');
+  sel.innerHTML = '<option value="">Select service…</option>';
+  services.forEach(s => sel.innerHTML += `<option value="${s.id}">${esc(s.name)}</option>`);
+}
+
+async function loadContainers() {
+  const { data, error } = await window.adminSupabase
+    .from('mentorship_containers')
+    .select('*, clients(id, full_name), services(id, name)')
+    .eq('is_archived', false)
+    .order('created_at', { ascending: false });
+  if (error) { showToast('Failed to load containers', 'error'); return; }
+  allContainers = data || [];
+  renderContainers();
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.status-tab').forEach((btn, i) => {
+    const filters = ['active','paused','completed','all'];
+    btn.classList.toggle('active', filters[i] === filter);
+  });
+  renderContainers();
+}
+
+function renderContainers() {
+  const list = currentFilter === 'all'
+    ? allContainers
+    : allContainers.filter(c => c.status === currentFilter);
+
+  const grid = document.getElementById('containerGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty">No ${currentFilter === 'all' ? '' : currentFilter + ' '}containers.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => {
+    const used = c.sessions_used || 0;
+    const total = c.total_sessions || 1;
+    const pct = Math.min(100, Math.round((used / total) * 100));
+    const dateRange = [c.start_date, c.end_date].filter(Boolean).map(d => new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})).join(' – ');
+    return `<div class="container-card" onclick="openModal('${c.id}')">
+      <div class="container-card__header">
+        <div>
+          <div class="container-card__title">${esc(c.name)}</div>
+          <div class="container-card__client">${esc(c.clients?.full_name || '—')}</div>
+        </div>
+        <span class="status-badge status-${c.status}">${c.status}</span>
+      </div>
+      ${c.services?.name ? `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">${esc(c.services.name)}</div>` : ''}
+      <div class="progress-bar">
+        <div class="progress-bar__fill" style="width:${pct}%"></div>
+      </div>
+      <div class="progress-label">
+        <span>${used} sessions used</span>
+        <span>${total} total</span>
+      </div>
+      ${dateRange ? `<div class="container-card__dates">${dateRange}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function adjustSessions(delta) {
+  const total = parseInt(document.getElementById('fTotal').value) || 1;
+  sessionsUsedVal = Math.max(0, Math.min(total, sessionsUsedVal + delta));
+  document.getElementById('sessionsUsed').textContent = sessionsUsedVal;
+}
+
+function syncTotalDisplay() {
+  document.getElementById('totalDisplay').textContent = document.getElementById('fTotal').value || '?';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fTotal').addEventListener('input', syncTotalDisplay);
+});
+
+function openModal(id) {
+  editingId = id || null;
+  document.getElementById('modalTitle').textContent = id ? 'Edit Container' : 'New Container';
+  document.getElementById('deleteBtn').style.display = id ? '' : 'none';
+
+  if (id) {
+    const c = allContainers.find(x => x.id === id);
+    if (c) {
+      document.getElementById('fName').value = c.name || '';
+      document.getElementById('fClient').value = c.client_id || '';
+      document.getElementById('fService').value = c.service_id || '';
+      document.getElementById('fStatus').value = c.status || 'active';
+      document.getElementById('fTotal').value = c.total_sessions || 6;
+      sessionsUsedVal = c.sessions_used || 0;
+      document.getElementById('sessionsUsed').textContent = sessionsUsedVal;
+      document.getElementById('totalDisplay').textContent = c.total_sessions || 6;
+      document.getElementById('fStart').value = c.start_date || '';
+      document.getElementById('fEnd').value = c.end_date || '';
+      document.getElementById('fDesc').value = c.description || '';
+      document.getElementById('fNotes').value = c.notes || '';
+    }
+  } else {
+    document.getElementById('fName').value = '';
+    document.getElementById('fClient').value = '';
+    document.getElementById('fService').value = '';
+    document.getElementById('fStatus').value = 'active';
+    document.getElementById('fTotal').value = 6;
+    sessionsUsedVal = 0;
+    document.getElementById('sessionsUsed').textContent = 0;
+    document.getElementById('totalDisplay').textContent = 6;
+    document.getElementById('fStart').value = '';
+    document.getElementById('fEnd').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fNotes').value = '';
+  }
+  document.getElementById('containerModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('containerModal').classList.remove('open');
+}
+
+async function saveContainer() {
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+
+  const name = document.getElementById('fName').value.trim();
+  const clientId = document.getElementById('fClient').value;
+  if (!name || !clientId) { showToast('Name and client are required', 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+
+  const payload = {
+    name,
+    client_id: clientId,
+    service_id: document.getElementById('fService').value || null,
+    status: document.getElementById('fStatus').value,
+    total_sessions: parseInt(document.getElementById('fTotal').value) || 6,
+    sessions_used: sessionsUsedVal,
+    start_date: document.getElementById('fStart').value || null,
+    end_date: document.getElementById('fEnd').value || null,
+    description: document.getElementById('fDesc').value.trim() || null,
+    notes: document.getElementById('fNotes').value.trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (editingId) {
+    const { error } = await window.adminSupabase.from('mentorship_containers').update(payload).eq('id', editingId);
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+    showToast('Container updated', 'success');
+  } else {
+    const { error } = await window.adminSupabase.from('mentorship_containers').insert(payload);
+    if (error) { showToast('Save failed: ' + error.message, 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+    showToast('Container created', 'success');
+  }
+  closeModal();
+  await loadContainers();
+  btn.textContent = 'Save'; btn.disabled = false;
+}
+
+async function deleteContainer() {
+  if (!editingId) return;
+  if (!confirm('Archive this container?')) return;
+  const { error } = await window.adminSupabase.from('mentorship_containers').update({ is_archived: true }).eq('id', editingId);
+  if (error) { showToast('Archive failed', 'error'); return; }
+  closeModal();
+  await loadContainers();
+  showToast('Container archived');
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast show${type ? ' '+type : ''}`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+document.getElementById('containerModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
