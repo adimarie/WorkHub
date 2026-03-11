@@ -1,9 +1,9 @@
 {
-  "version": "v260311.03 1:02am",
-  "release": 3,
-  "sha": "c2460bf",
-  "fullSha": "c2460bf91c7bcd0b40ad48d3b8c767cfdedea262",
+  "version": "v260311.04 1:02am",
+  "release": 4,
+  "sha": "eda4b60",
+  "fullSha": "eda4b60af95ed01e6771ff437787e8c1cfcf3c3c",
   "actor": "adimarie",
-  "pushedAt": "2026-03-11T06:02:25Z",
-  "commits": [{"sha": "c2460bf", "message": "feat: rebuild admin dashboard as full hub page", "author": "Adi"}]
+  "pushedAt": "2026-03-11T06:02:38Z",
+  "commits": [{"sha": "eda4b60", "message": "Delete CNAME", "author": "adimarie"}]
 }
