@@ -1,9 +1,9 @@
 {
-  "version": "v260310.16 2:48pm",
-  "release": 16,
-  "sha": "2e839b8",
-  "fullSha": "2e839b8f14bebd2674c0367e420453436c0fd2a8",
+  "version": "v260311.01 12:23am",
+  "release": 1,
+  "sha": "fd28517",
+  "fullSha": "fd28517fd552f031df26f1eae86dddc7ed7c6f5a",
   "actor": "adimarie",
-  "pushedAt": "2026-03-10T19:48:54Z",
-  "commits": [{"sha": "2e839b8", "message": "feat: full offering hierarchy \u2014 services overview + 6 individual pages", "author": "Adi"}]
+  "pushedAt": "2026-03-11T05:23:15Z",
+  "commits": [{"sha": "fd28517", "message": "Create CNAME", "author": "adimarie"}]
 }
