@@ -1,9 +1,9 @@
 {
-  "version": "v260311.02 12:56am",
-  "release": 2,
-  "sha": "abdb0ff",
-  "fullSha": "abdb0ff1a832ba07cd8a1b6b4ea1eb71f91760bf",
+  "version": "v260311.03 1:02am",
+  "release": 3,
+  "sha": "c2460bf",
+  "fullSha": "c2460bf91c7bcd0b40ad48d3b8c767cfdedea262",
   "actor": "adimarie",
-  "pushedAt": "2026-03-11T05:56:07Z",
-  "commits": [{"sha": "abdb0ff", "message": "feat: admin CRUD pages + CRM pipeline view", "author": "Adi"}]
+  "pushedAt": "2026-03-11T06:02:25Z",
+  "commits": [{"sha": "c2460bf", "message": "feat: rebuild admin dashboard as full hub page", "author": "Adi"}]
 }
