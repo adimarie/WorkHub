@@ -1557,7 +1557,11 @@ const NAV = [
 ];
 
 function WorkHub() {
-  const [view, setView] = useState("overview");
+  const startView = (function() {
+    try { const v = sessionStorage.getItem('crm:startView'); if (v) { sessionStorage.removeItem('crm:startView'); return v; } } catch {}
+    return "overview";
+  })();
+  const [view, setView] = useState(startView);
   const [clients, setClients] = useState([]);
   const [groups, setGroups] = useState(SAMPLE_GROUPS);
   const [loaded, setLoaded] = useState(false);

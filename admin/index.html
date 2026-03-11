@@ -1,160 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — Workhub</title>
-    <link rel="stylesheet" href="../shared/admin.css">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Georgia, serif; background: var(--aap-bg); color: var(--aap-text); }
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: var(--aap-surface); border-bottom: 1px solid var(--aap-border);
-            height: 60px; display: flex; align-items: center; padding: 0 24px;
-            box-shadow: var(--aap-shadow-sm);
-        }
-        .site-nav__inner {
-            display: flex; align-items: center; justify-content: space-between;
-            width: 100%; gap: 16px;
-        }
-        .site-nav__brand {
-            font-size: 1.1rem; font-weight: 700; color: var(--aap-accent-deep);
-            text-decoration: none; letter-spacing: 0.01em;
-        }
-        .admin-greeting { font-size: 13px; color: var(--aap-text-dim); margin-left: auto; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — The Animist Apothecary</title>
+  <link rel="stylesheet" href="../shared/admin.css">
+  <style>
+    :root {
+      --wine: #6b2d3e; --gold: #c9a84c; --cream: #f5f0e8;
+      --sage: #5a6b5d; --surface: #ffffff; --border: #e5e0d8; --text: #2d2520; --muted: #8a8078;
+    }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--cream); color:var(--text); }
+    .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+
+    /* ── Sidebar ─────────────────────────────── */
+    .sidebar { background:var(--wine); color:#fff; padding:24px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar__brand { padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,.15); }
+    .sidebar__brand-name { font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#fff; }
+    .sidebar__brand-sub  { font-size:11px; color:rgba(255,255,255,.5); margin-top:2px; }
+    .sidebar__nav { padding:16px 0; }
+    .sidebar__nav a { display:block; padding:10px 20px; color:rgba(255,255,255,.75); text-decoration:none; font-size:13px; font-weight:500; transition:all .15s; }
+    .sidebar__nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar__nav a.active { background:rgba(255,255,255,.15); color:#fff; border-left:3px solid var(--gold); padding-left:17px; }
+    .sidebar__nav-section { padding:16px 20px 6px; font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.3); }
+    .sidebar__divider { height:1px; background:rgba(255,255,255,.12); margin:8px 20px; }
+    .sidebar__user { padding:16px 20px; border-top:1px solid rgba(255,255,255,.15); }
+    .sidebar__user-name { font-size:12px; font-weight:600; color:#fff; }
+    .sidebar__user-email { font-size:11px; color:rgba(255,255,255,.5); }
+    .sidebar__signout { display:block; margin-top:10px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; text-decoration:underline; }
+
+    /* ── Main ─────────────────────────────────── */
+    .main { padding:36px 40px; overflow-y:auto; }
+
+    .welcome-bar { margin-bottom:32px; }
+    .welcome-bar__name { font-size:26px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .welcome-bar__date { font-size:13px; color:var(--muted); }
+
+    /* ── Stats ───────────────────────────────── */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:12px; margin-bottom:32px; }
+    .stat-card {
+      background:#fff; border:1px solid var(--border); border-radius:10px; padding:18px 20px;
+      display:flex; flex-direction:column; gap:6px; cursor:pointer; text-decoration:none; transition:.15s;
+    }
+    .stat-card:hover { border-color:var(--wine); box-shadow:0 4px 16px rgba(107,45,62,.08); transform:translateY(-2px); }
+    .stat-card__icon { font-size:22px; margin-bottom:4px; }
+    .stat-card__value { font-size:28px; font-weight:800; color:var(--text); line-height:1; }
+    .stat-card__label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+
+    /* ── Section heading ─────────────────────── */
+    .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 0 14px; }
+
+    /* ── Page cards ──────────────────────────── */
+    .pages-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; margin-bottom:36px; }
+    .page-card {
+      display:flex; align-items:center; gap:14px;
+      background:#fff; border:1px solid var(--border); border-radius:10px;
+      padding:16px 18px; text-decoration:none; color:inherit; transition:.15s;
+    }
+    .page-card:hover { border-color:var(--wine); box-shadow:0 4px 16px rgba(107,45,62,.07); transform:translateY(-1px); }
+    .page-card__icon {
+      width:44px; height:44px; border-radius:10px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:20px;
+      background:linear-gradient(135deg, rgba(107,45,62,.06), rgba(201,168,76,.08));
+    }
+    .page-card__title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:3px; }
+    .page-card__desc { font-size:12px; color:var(--muted); line-height:1.45; }
+
+    /* CRM card accent */
+    .page-card--crm {
+      background:linear-gradient(135deg, #fdf9f3, #f2ebe0);
+      border-color:rgba(200,146,58,.35);
+    }
+    .page-card--crm:hover { border-color:var(--gold); }
+
+    /* ── 2-column layout for bottom section ─── */
+    .bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+    /* ── Recent activity list ────────────────── */
+    .activity-card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:20px; }
+    .activity-card h3 { font-size:14px; font-weight:700; margin:0 0 16px; }
+    .activity-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #f5f0e8; }
+    .activity-row:last-child { border-bottom:none; }
+    .activity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .activity-info { flex:1; }
+    .activity-title { font-size:13px; font-weight:600; color:var(--text); }
+    .activity-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+    .activity-time { font-size:11px; color:var(--muted); white-space:nowrap; }
+
+    /* ── Quick links ─────────────────────────── */
+    .quick-card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:20px; }
+    .quick-card h3 { font-size:14px; font-weight:700; margin:0 0 14px; }
+    .quick-link {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0; border-bottom:1px solid #f5f0e8; font-size:13px; color:var(--text);
+      text-decoration:none; transition:.1s;
+    }
+    .quick-link:last-child { border-bottom:none; }
+    .quick-link:hover { color:var(--wine); }
+    .quick-link__arrow { color:var(--muted); font-size:16px; }
+
+    .toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:#1a1a1a; color:#fff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; transform:translateY(80px); opacity:0; transition:.3s; max-width:320px; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:var(--sage); }
+
+    @media(max-width:900px) {
+      .admin-layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:20px; }
+      .bottom-grid { grid-template-columns:1fr; }
+    }
+  </style>
 </head>
 <body>
-
-<nav>
-    <div class="site-nav__inner">
-        <a href="../index.html" class="site-nav__brand">🌿 Workhub</a>
-        <span class="admin-greeting" id="greeting"></span>
-    </div>
-</nav>
-
 <div class="admin-layout">
-    <div class="admin-topbar">
-        <span class="admin-topbar__label">ADMIN</span>
-        <nav class="admin-topbar__nav">
-            <a href="index.html" class="active">Dashboard</a>
-            <a href="clients.html">Clients</a>
-            <a href="appointments.html">Appointments</a>
-            <a href="services.html">Services</a>
-            <a href="mentorship.html">Mentorship</a>
-            <a href="payments.html">Payments</a>
-        </nav>
+
+  <!-- ── Sidebar ───────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-name">Animist Apothecary</div>
+      <div class="sidebar__brand-sub">Practice Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="index.html" class="active">Dashboard</a>
+
+      <div class="sidebar__nav-section">Practice</div>
+      <a href="clients.html">Clients</a>
+      <a href="appointments.html">Appointments</a>
+      <a href="services.html">Services</a>
+      <a href="mentorship.html">Mentorship</a>
+      <a href="payments.html">Payments</a>
+      <a href="intake-forms.html">Intake Forms</a>
+
+      <div class="sidebar__divider"></div>
+      <div class="sidebar__nav-section">WorkHub CRM</div>
+      <a href="../crm/">Overview</a>
+      <a href="../crm/#clients">Clients</a>
+      <a href="../crm/#pipeline">Pipeline</a>
+      <a href="../crm/#groups">Groups</a>
+      <a href="../crm/#income">Income</a>
+      <a href="../crm/#automation">Automation</a>
+
+      <div class="sidebar__divider"></div>
+      <a href="../index.html" style="font-size:12px;color:rgba(255,255,255,.4)">← Public Site</a>
+    </nav>
+    <div class="sidebar__user">
+      <div class="sidebar__user-name" id="userName">—</div>
+      <div class="sidebar__user-email" id="userEmail">—</div>
+      <a class="sidebar__signout" id="signOutBtn">Sign out</a>
+    </div>
+  </aside>
+
+  <!-- ── Main ──────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Welcome -->
+    <div class="welcome-bar">
+      <div class="welcome-bar__name" id="welcomeName">Welcome back</div>
+      <div class="welcome-bar__date" id="welcomeDate"></div>
     </div>
 
-    <div class="admin-container">
-        <div class="admin-page-header">
-            <h1>Dashboard</h1>
-            <p>Your practice at a glance</p>
-        </div>
-
-        <div class="admin-stats" id="stats">
-            <div class="admin-stat">
-                <div class="admin-stat__icon">🌱</div>
-                <div class="admin-stat__value" id="statClients">—</div>
-                <div class="admin-stat__label">Clients</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat__icon">🗓</div>
-                <div class="admin-stat__value" id="statAppts">—</div>
-                <div class="admin-stat__label">Upcoming appointments</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat__icon">🔮</div>
-                <div class="admin-stat__value" id="statContainers">—</div>
-                <div class="admin-stat__label">Active mentorship containers</div>
-            </div>
-            <div class="admin-stat">
-                <div class="admin-stat__icon">✨</div>
-                <div class="admin-stat__value" id="statServices">—</div>
-                <div class="admin-stat__label">Offerings</div>
-            </div>
-        </div>
-
-        <div class="admin-cards">
-            <a href="clients.html" class="admin-card">
-                <div class="admin-card__icon">🌱</div>
-                <div>
-                    <div class="admin-card__title">Clients</div>
-                    <div class="admin-card__desc">Manage client records, notes, tags, and intake forms</div>
-                </div>
-            </a>
-            <a href="appointments.html" class="admin-card">
-                <div class="admin-card__icon">🗓</div>
-                <div>
-                    <div class="admin-card__title">Appointments</div>
-                    <div class="admin-card__desc">Schedule and track somatic sessions, ceremonies, and calls</div>
-                </div>
-            </a>
-            <a href="services.html" class="admin-card">
-                <div class="admin-card__icon">🌸</div>
-                <div>
-                    <div class="admin-card__title">Services & Offerings</div>
-                    <div class="admin-card__desc">Define your offerings, durations, and pricing</div>
-                </div>
-            </a>
-            <a href="mentorship.html" class="admin-card">
-                <div class="admin-card__icon">🔮</div>
-                <div>
-                    <div class="admin-card__title">Mentorship Containers</div>
-                    <div class="admin-card__desc">Manage ongoing mentorship packages and session tracking</div>
-                </div>
-            </a>
-            <a href="payments.html" class="admin-card">
-                <div class="admin-card__icon">💫</div>
-                <div>
-                    <div class="admin-card__title">Payments</div>
-                    <div class="admin-card__desc">Track payments, invoices, and financial records</div>
-                </div>
-            </a>
-            <a href="intake-forms.html" class="admin-card">
-                <div class="admin-card__icon">📋</div>
-                <div>
-                    <div class="admin-card__title">Intake Forms</div>
-                    <div class="admin-card__desc">Review and manage client intake submissions</div>
-                </div>
-            </a>
-            <a href="../crm/" class="admin-card" style="border-color:#c8923a44;background:linear-gradient(135deg,#fdf9f3,#f2ebe0);">
-                <div class="admin-card__icon">✦</div>
-                <div>
-                    <div class="admin-card__title" style="color:#2e1f10;">WorkHub CRM</div>
-                    <div class="admin-card__desc">Client dossiers, groups, circuit, income & automation flows</div>
-                </div>
-            </a>
-        </div>
+    <!-- Stats -->
+    <div class="stats-grid">
+      <a href="clients.html" class="stat-card">
+        <div class="stat-card__icon">🌱</div>
+        <div class="stat-card__value" id="statClients">—</div>
+        <div class="stat-card__label">Clients</div>
+      </a>
+      <a href="appointments.html" class="stat-card">
+        <div class="stat-card__icon">🗓</div>
+        <div class="stat-card__value" id="statAppts">—</div>
+        <div class="stat-card__label">Upcoming</div>
+      </a>
+      <a href="mentorship.html" class="stat-card">
+        <div class="stat-card__icon">🔮</div>
+        <div class="stat-card__value" id="statContainers">—</div>
+        <div class="stat-card__label">Active Arcs</div>
+      </a>
+      <a href="services.html" class="stat-card">
+        <div class="stat-card__icon">🌸</div>
+        <div class="stat-card__value" id="statServices">—</div>
+        <div class="stat-card__label">Offerings</div>
+      </a>
+      <a href="payments.html" class="stat-card">
+        <div class="stat-card__icon">💫</div>
+        <div class="stat-card__value" id="statPayments">—</div>
+        <div class="stat-card__label">This Month</div>
+      </a>
+      <a href="intake-forms.html" class="stat-card">
+        <div class="stat-card__icon">📋</div>
+        <div class="stat-card__value" id="statForms">—</div>
+        <div class="stat-card__label">Intake Forms</div>
+      </a>
     </div>
+
+    <!-- Admin Pages -->
+    <p class="section-label">Practice Management</p>
+    <div class="pages-grid">
+      <a href="clients.html" class="page-card">
+        <div class="page-card__icon">🌱</div>
+        <div>
+          <div class="page-card__title">Clients</div>
+          <div class="page-card__desc">Client records, notes, tags, contact info</div>
+        </div>
+      </a>
+      <a href="appointments.html" class="page-card">
+        <div class="page-card__icon">🗓</div>
+        <div>
+          <div class="page-card__title">Appointments</div>
+          <div class="page-card__desc">Calendar, session scheduling, Google Calendar sync</div>
+        </div>
+      </a>
+      <a href="services.html" class="page-card">
+        <div class="page-card__icon">🌸</div>
+        <div>
+          <div class="page-card__title">Services & Offerings</div>
+          <div class="page-card__desc">Modalities, pricing, durations by category</div>
+        </div>
+      </a>
+      <a href="mentorship.html" class="page-card">
+        <div class="page-card__icon">🔮</div>
+        <div>
+          <div class="page-card__title">Mentorship Containers</div>
+          <div class="page-card__desc">Long-arc packages, session progress tracking</div>
+        </div>
+      </a>
+      <a href="payments.html" class="page-card">
+        <div class="page-card__icon">💫</div>
+        <div>
+          <div class="page-card__title">Payments</div>
+          <div class="page-card__desc">Record payments, view revenue summaries</div>
+        </div>
+      </a>
+      <a href="intake-forms.html" class="page-card">
+        <div class="page-card__icon">📋</div>
+        <div>
+          <div class="page-card__title">Intake Forms</div>
+          <div class="page-card__desc">Client intake submissions and medical history</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- CRM -->
+    <p class="section-label">WorkHub CRM</p>
+    <div class="pages-grid" style="margin-bottom:36px">
+      <a href="../crm/" class="page-card page-card--crm">
+        <div class="page-card__icon">✦</div>
+        <div>
+          <div class="page-card__title">Overview</div>
+          <div class="page-card__desc">Practice pulse — sessions, revenue, active groups</div>
+        </div>
+      </a>
+      <a href="../crm/#" onclick="crmNav('clients')" class="page-card page-card--crm">
+        <div class="page-card__icon">◯</div>
+        <div>
+          <div class="page-card__title">Client Dossiers</div>
+          <div class="page-card__desc">Full intake forms, health history, session logs</div>
+        </div>
+      </a>
+      <a href="../crm/#" onclick="crmNav('pipeline')" class="page-card page-card--crm">
+        <div class="page-card__icon">⟶</div>
+        <div>
+          <div class="page-card__title">Client Pipeline</div>
+          <div class="page-card__desc">Kanban flow — inquiry through alumni stages</div>
+        </div>
+      </a>
+      <a href="../crm/#" onclick="crmNav('groups')" class="page-card page-card--crm">
+        <div class="page-card__icon">⬡</div>
+        <div>
+          <div class="page-card__title">Groups & Circles</div>
+          <div class="page-card__desc">Councils, community containers, ceremonial sittings</div>
+        </div>
+      </a>
+      <a href="../crm/#" onclick="crmNav('income')" class="page-card page-card--crm">
+        <div class="page-card__icon">$</div>
+        <div>
+          <div class="page-card__title">Income & Reciprocity</div>
+          <div class="page-card__desc">Revenue by modality, client breakdown, rate card</div>
+        </div>
+      </a>
+      <a href="../crm/#" onclick="crmNav('automation')" class="page-card page-card--crm">
+        <div class="page-card__icon">⚡</div>
+        <div>
+          <div class="page-card__title">Automation Flows</div>
+          <div class="page-card__desc">Client journey sequences for single sessions and arcs</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Bottom row: recent activity + quick actions -->
+    <div class="bottom-grid">
+      <div class="activity-card">
+        <h3>Recent Appointments</h3>
+        <div id="recentAppts">
+          <div style="font-size:13px;color:var(--muted);font-style:italic">Loading…</div>
+        </div>
+      </div>
+
+      <div class="quick-card">
+        <h3>Quick Actions</h3>
+        <a href="clients.html" class="quick-link" onclick="sessionStorage.setItem('admin:openNew','client')">
+          <span>+ Add new client</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="appointments.html" class="quick-link" onclick="sessionStorage.setItem('admin:openNew','appointment')">
+          <span>+ Schedule appointment</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="payments.html" class="quick-link" onclick="sessionStorage.setItem('admin:openNew','payment')">
+          <span>+ Record payment</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="mentorship.html" class="quick-link">
+          <span>+ New mentorship container</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="intake-forms.html" class="quick-link">
+          <span>+ Add intake form entry</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="../crm/" class="quick-link">
+          <span>Open WorkHub CRM</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+        <a href="../index.html" class="quick-link">
+          <span>View public site</span>
+          <span class="quick-link__arrow">›</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../shared/supabase.js"></script>
 <script src="../shared/auth.js"></script>
 <script>
-requireAuth(function(user, sb) {
-    // Greet
-    var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Practitioner';
-    var firstName = name.split(' ')[0];
-    document.getElementById('greeting').textContent = 'Welcome, ' + firstName;
+function crmNav(view) {
+  sessionStorage.setItem('crm:startView', view);
+}
 
-    // Load stats
-    var now = new Date().toISOString();
+requireAuth(async function(user, sb) {
+  // Welcome
+  var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Practitioner';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('welcomeName').textContent = 'Welcome back, ' + name.split(' ')[0];
+  document.getElementById('welcomeDate').textContent = new Date().toLocaleDateString('en-US', {
+    weekday:'long', month:'long', day:'numeric', year:'numeric'
+  });
 
-    Promise.all([
-        sb.from('clients').select('id', { count: 'exact', head: true }).eq('is_archived', false),
-        sb.from('appointments').select('id', { count: 'exact', head: true }).eq('is_archived', false).gte('scheduled_at', now),
-        sb.from('mentorship_containers').select('id', { count: 'exact', head: true }).eq('is_archived', false).eq('status', 'active'),
-        sb.from('services').select('id', { count: 'exact', head: true }).eq('is_archived', false).eq('is_active', true)
-    ]).then(function(results) {
-        document.getElementById('statClients').textContent = results[0].count ?? '—';
-        document.getElementById('statAppts').textContent = results[1].count ?? '—';
-        document.getElementById('statContainers').textContent = results[2].count ?? '—';
-        document.getElementById('statServices').textContent = results[3].count ?? '—';
-    });
+  document.getElementById('signOutBtn').addEventListener('click', async function() {
+    await sb.auth.signOut();
+    window.location.href = '../login.html';
+  });
+
+  // Stats
+  var now = new Date().toISOString();
+  var monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+
+  var [clients, appts, containers, services, payments, forms] = await Promise.all([
+    sb.from('clients').select('id', { count:'exact', head:true }).eq('is_archived', false),
+    sb.from('appointments').select('id', { count:'exact', head:true }).eq('is_archived', false).gte('scheduled_at', now),
+    sb.from('mentorship_containers').select('id', { count:'exact', head:true }).eq('is_archived', false).eq('status', 'active'),
+    sb.from('services').select('id', { count:'exact', head:true }).eq('is_archived', false).eq('is_active', true),
+    sb.from('payments').select('amount_cents').eq('is_archived', false).eq('status', 'completed').gte('created_at', monthStart),
+    sb.from('intake_forms').select('id', { count:'exact', head:true }).eq('is_archived', false),
+  ]);
+
+  document.getElementById('statClients').textContent    = clients.count ?? '—';
+  document.getElementById('statAppts').textContent      = appts.count ?? '—';
+  document.getElementById('statContainers').textContent = containers.count ?? '—';
+  document.getElementById('statServices').textContent   = services.count ?? '—';
+  document.getElementById('statForms').textContent      = forms.count ?? '—';
+
+  var monthTotal = (payments.data || []).reduce(function(sum, p) { return sum + (p.amount_cents || 0); }, 0);
+  document.getElementById('statPayments').textContent = monthTotal > 0
+    ? '$' + (monthTotal / 100).toLocaleString('en-US', { minimumFractionDigits:0 })
+    : '—';
+
+  // Recent appointments
+  var { data: recentAppts } = await sb
+    .from('appointments')
+    .select('id, scheduled_at, status, clients(full_name), services(name, category)')
+    .eq('is_archived', false)
+    .gte('scheduled_at', now)
+    .order('scheduled_at')
+    .limit(5);
+
+  var CAT_COLORS = {
+    somatic:'#8b5cf6', ceremonial:'#c9a84c', mentorship:'#5a6b5d',
+    divination:'#0284c7', default:'#8a8078'
+  };
+
+  var apptEl = document.getElementById('recentAppts');
+  if (!recentAppts || !recentAppts.length) {
+    apptEl.innerHTML = '<div style="font-size:13px;color:var(--muted);font-style:italic">No upcoming appointments.</div>';
+  } else {
+    apptEl.innerHTML = recentAppts.map(function(a) {
+      var d = new Date(a.scheduled_at);
+      var dateStr = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+      var timeStr = d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+      var cat = a.services && a.services.category;
+      var color = CAT_COLORS[cat] || CAT_COLORS.default;
+      return '<div class="activity-row">' +
+        '<div class="activity-dot" style="background:' + color + '"></div>' +
+        '<div class="activity-info">' +
+          '<div class="activity-title">' + esc(a.services && a.services.name || 'Session') + '</div>' +
+          '<div class="activity-sub">' + esc(a.clients && a.clients.full_name || '—') + '</div>' +
+        '</div>' +
+        '<div class="activity-time">' + dateStr + '<br>' + timeStr + '</div>' +
+      '</div>';
+    }).join('');
+  }
 });
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 </script>
 </body>
 </html>
